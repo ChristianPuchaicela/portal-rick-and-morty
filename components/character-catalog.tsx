@@ -12,9 +12,8 @@ function CharacterCard({ character }: { character: CharacterSummary }) {
         className="character-card"
         href={characterPath(character.id)}
         prefetch={false}
-        aria-labelledby={`character-name-${character.id} character-action-${character.id}`}
       >
-        <div className="character-portrait">
+        <div className="character-portrait" aria-hidden="true">
           <Image
             src={character.image}
             alt={`Retrato de ${character.name}`}
@@ -26,10 +25,10 @@ function CharacterCard({ character }: { character: CharacterSummary }) {
         <div className="character-caption">
           <span className="character-id font-mono">ID {character.id}</span>
           <div className="character-caption-row">
-            <h3 id={`character-name-${character.id}`} className="character-name">{character.name}</h3>
+            <h3 className="character-name">{character.name}</h3>
             <span className="character-arrow" aria-hidden="true">→</span>
           </div>
-          <span id={`character-action-${character.id}`} className="sr-only">Ver ficha</span>
+          <span className="sr-only">Ver ficha</span>
         </div>
       </Link>
     </li>

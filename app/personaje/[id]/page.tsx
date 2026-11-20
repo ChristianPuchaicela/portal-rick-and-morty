@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, type ReactNode } from "react";
 import { CharacterStatus } from "@/components/character-status";
+import { CharacterSummaryPanel } from "@/components/character-summary-panel";
 import { RequestRetry } from "@/components/request-retry";
 import { parseCharacterId } from "@/lib/character-id";
 import { characterGenders } from "@/lib/character-labels";
@@ -112,6 +113,7 @@ export default async function CharacterPage({ params }: DetailProps) {
           </div>
         </div>
       </article>
+      <CharacterSummaryPanel key={character.id} id={character.id} />
       <section className="detail-episodes" aria-labelledby="episodes-title">
         <h2 id="episodes-title" className="search-title">Episodios</h2>
         {character.episode.length > 0 ? (

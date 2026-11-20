@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Suspense } from "react";
 import { CatalogLoading, CharacterCatalog } from "@/components/character-catalog";
 import { CharacterIdForm } from "@/components/character-id-form";
@@ -20,9 +21,16 @@ export default function Home() {
             Explora cómo la API de Rick y Morty identifica a cada personaje del multiverso.
           </p>
         </div>
-        <div aria-hidden="true" className="portal-art">
+        <div className="portal-art">
           <DotPattern />
-          <div className="portal-core" />
+          <Image
+            src="/rick-and-morty.svg"
+            loading="eager"
+            width={1024}
+            height={313}
+            alt="Rick and Morty"
+            className="hero-logo"
+          />
         </div>
       </div>
       <section id="buscar" aria-labelledby="buscar-titulo" className="search-panel">
