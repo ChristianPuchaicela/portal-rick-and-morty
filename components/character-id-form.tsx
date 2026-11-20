@@ -75,25 +75,23 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
         />
         <button
           type="submit"
-          className={onConsult ? "search-submit" : "search-submit search-submit-icon"}
-          aria-label={onConsult ? undefined : "Buscar personaje"}
+          className="search-submit search-submit-icon"
+          aria-label="Buscar personaje"
           aria-disabled={busy}
         >
-          {onConsult ? "Consultar personaje" : (
-            <svg
-              aria-hidden="true"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="10.5" cy="10.5" r="6.5" />
-              <path d="m16 16 4 4" />
-            </svg>
-          )}
+          <svg
+            aria-hidden="true"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
         </button>
       </div>
       <p

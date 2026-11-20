@@ -17,7 +17,7 @@ export default async function TestEndpointPage({
 
   return (
     <main id="contenido" tabIndex={-1} className="shell inner-page">
-      <header className="mb-6">
+      <header className="mb-6 text-center">
         <h1 className="inner-title">Probar endpoint</h1>
         <p className="hero-description text-muted-foreground">Consulta un personaje por ID e inspecciona la respuesta de la API.</p>
       </header>

@@ -227,17 +227,17 @@ html {
   text-align: start;
 }
 
-.search-panel .search-controls {
+.search-controls {
   position: relative;
 }
 
-.search-panel .search-input {
+.search-controls .search-input {
   min-block-size: calc(var(--control-size) + 0.5rem);
   padding-inline-end: calc(var(--control-size) + 0.75rem);
   background: var(--card);
 }
 
-.search-panel .search-submit-icon {
+.search-controls .search-submit-icon {
   position: absolute;
   inset-block-start: 50%;
   inset-inline-end: 0.25rem;
@@ -326,6 +326,7 @@ html {
 }
 
 .inner-title {
+  color: var(--palette-portal);
   margin-block: 0.375rem 0.75rem;
   font-family: var(--type-display);
   font-size: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
