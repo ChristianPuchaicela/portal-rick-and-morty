@@ -1,0 +1,56 @@
+:root {
+  color-scheme: dark;
+
+  /* Paleta */
+  --palette-space: #0b1220;
+  --palette-panel: #131e30;
+  --palette-inset: #0e1726;
+  --palette-line: #2a3a50;
+  --palette-field: #69819a;
+  --palette-portal: #97ce4c;
+  --palette-ice: #bdeaf2;
+  --palette-white: #f9f9f9;
+  --palette-fog: #b4c2d3;
+  --palette-coral: #ffada6;
+
+  /* Roles de interfaz compartidos con shadcn/ui */
+  --background: var(--palette-space);
+  --foreground: var(--palette-white);
+  --card: var(--palette-panel);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: var(--palette-portal);
+  --primary-foreground: var(--background);
+  --primary-hover: color-mix(in srgb, var(--primary) 75%, var(--foreground));
+  --secondary: var(--palette-inset);
+  --secondary-foreground: var(--palette-ice);
+  --muted: var(--card);
+  --muted-foreground: var(--palette-fog);
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
+  --destructive: var(--palette-coral);
+  --border: var(--palette-line);
+  --input: var(--palette-field);
+  --ring: var(--primary);
+
+  /* Tipografía */
+  --type-display: "Space Grotesk Variable", system-ui, sans-serif;
+  --type-body: "Inter Variable", system-ui, sans-serif;
+  --type-code: "IBM Plex Mono", ui-monospace, monospace;
+  --type-hero: clamp(2.375rem, 1.5rem + 4.4vw, 6rem);
+  --type-heading: clamp(1.625rem, 1.25rem + 1vw, 2.375rem);
+  --type-lead: clamp(1rem, 0.95rem + 0.4vw, 1.25rem);
+  --type-small: 0.875rem;
+  --tracking-display: -0.055em;
+
+  /* Composición e interacción */
+  --layout-width: 76rem;
+  --layout-gutter: clamp(1rem, 4vw, 3.5rem);
+  --section-space: clamp(2rem, 5vw, 5.5rem);
+  --panel-padding: clamp(1rem, 3vw, 2.5rem);
+  --control-size: 3rem;
+  --radius: 0.875rem;
+  --radius-panel: 1.5rem;
+  --transition-fast: 160ms;
+}
