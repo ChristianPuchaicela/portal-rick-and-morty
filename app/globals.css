@@ -242,6 +242,7 @@ html {
 .search-panel .search-input {
   min-block-size: calc(var(--control-size) + 0.5rem);
   padding-inline-end: calc(var(--control-size) + 0.75rem);
+  background: var(--card);
 }
 
 .search-panel .search-submit-icon {
@@ -330,7 +331,6 @@ html {
 .tool-panel {
   padding: var(--panel-padding);
   border-radius: var(--radius-panel);
-  background: var(--card);
 }
 
 .detail-panel {
@@ -352,19 +352,6 @@ html {
   margin-inline: auto;
   aspect-ratio: 1.1;
   border-radius: var(--radius);
-  background:
-    radial-gradient(ellipse at center, color-mix(in srgb, var(--primary) 28%, transparent), transparent 70%),
-    radial-gradient(circle, color-mix(in srgb, var(--secondary-foreground) 32%, transparent) 1px, transparent 1.5px) 0 0 / 1.25rem 1.25rem,
-    var(--secondary);
-}
-
-.character-orbit {
-  position: absolute;
-  inset: 8% 12%;
-  border: 2px solid var(--primary);
-  border-inline-end-style: dashed;
-  border-radius: 50%;
-  box-shadow: 0 0 2rem color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 .detail-image {
@@ -373,7 +360,6 @@ html {
   block-size: auto;
   aspect-ratio: 1;
   border-radius: 50%;
-  box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--primary) 18%, transparent);
   object-fit: cover;
 }
 
@@ -403,8 +389,12 @@ html {
   display: inline-flex;
   min-block-size: 2.75rem;
   align-items: center;
-  text-decoration: underline;
   text-underline-offset: 0.18em;
+  color: var(--primary);
+}
+
+.inline-data-link:hover {
+  text-decoration: underline;
 }
 
 .vital-status {
