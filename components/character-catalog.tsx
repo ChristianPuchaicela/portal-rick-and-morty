@@ -1,14 +1,17 @@
 import Image from "next/image";
+import Link from "next/link";
 import { connection } from "next/server";
-import { characterApiUrl, getFirstCharacterPage, type CharacterSummary } from "@/lib/characters";
-import { CatalogRetry } from "@/components/catalog-retry";
+import { characterPath } from "@/lib/character-id";
+import { getFirstCharacterPage, type CharacterSummary } from "@/lib/characters";
+import { RequestRetry } from "@/components/request-retry";
 
 function CharacterCard({ character }: { character: CharacterSummary }) {
   return (
     <li>
-      <a
+      <Link
         className="character-card"
-        href={characterApiUrl(character.id)}
+        href={characterPath(character.id)}
+        prefetch={false}
         aria-labelledby={`character-name-${character.id} character-action-${character.id}`}
       >
         <div className="character-portrait">
@@ -24,11 +27,11 @@ function CharacterCard({ character }: { character: CharacterSummary }) {
           <span className="character-id font-mono">ID {character.id}</span>
           <div className="character-caption-row">
             <h3 id={`character-name-${character.id}`} className="character-name">{character.name}</h3>
-            <span className="character-arrow" aria-hidden="true">↗</span>
+            <span className="character-arrow" aria-hidden="true">→</span>
           </div>
-          <span id={`character-action-${character.id}`} className="sr-only">Ver en la API</span>
+          <span id={`character-action-${character.id}`} className="sr-only">Ver ficha</span>
         </div>
-      </a>
+      </Link>
     </li>
   );
 }
@@ -65,7 +68,7 @@ export async function CharacterCatalog() {
       <div className="catalog-notice">
         <p role="status" className="font-semibold text-destructive">No pudimos cargar los personajes.</p>
         <p className="mt-2 text-sm text-muted-foreground">La API puede estar temporalmente indisponible.</p>
-        <CatalogRetry />
+        <RequestRetry pendingMessage="Volviendo a consultar el catálogo…" />
       </div>
     );
   }
@@ -75,7 +78,7 @@ export async function CharacterCatalog() {
       <div className="catalog-notice">
         <p role="status" className="font-semibold">El catálogo está vacío.</p>
         <p className="mt-2 text-sm text-muted-foreground">La API respondió sin personajes en la primera página.</p>
-        <CatalogRetry />
+        <RequestRetry pendingMessage="Volviendo a consultar el catálogo…" />
       </div>
     );
   }

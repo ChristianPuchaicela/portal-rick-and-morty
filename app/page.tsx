@@ -29,7 +29,7 @@ export default function Home() {
         <div>
           <h2 id="buscar-titulo" className="search-title">Buscar por ID</h2>
           <p className="mt-2 max-w-[36ch] text-sm leading-relaxed text-muted-foreground">
-            Valida el identificador para preparar tu consulta.
+            Abre la ficha del personaje con su identificador.
           </p>
         </div>
         <CharacterIdForm />

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-export function CatalogRetry() {
+export function RequestRetry({ pendingMessage }: { pendingMessage: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -20,7 +20,7 @@ export function CatalogRetry() {
         Reintentar
       </button>
       <p role="status" className="mt-2 text-sm text-muted-foreground">
-        {pending ? "Volviendo a consultar el catálogo…" : ""}
+        {pending ? pendingMessage : ""}
       </p>
     </div>
   );
