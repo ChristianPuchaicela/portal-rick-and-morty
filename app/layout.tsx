@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { HomeSectionLink } from "@/components/home-section-link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,16 +19,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </a>
         <header className="site-header">
           <div className="shell header-content">
-            <Link href="/#inicio" className="header-link">
+            <HomeSectionLink section="inicio">
               <Image src="/icons8-rick-sanchez.svg" width={44} height={44} alt="Rick Sanchez · Inicio" />
-            </Link>
+            </HomeSectionLink>
             <nav aria-label="Principal" className="primary-nav">
-              <Link href="/#personajes" className="header-link">
+              <HomeSectionLink section="personajes">
                 Personajes
-              </Link>
-              <Link href="/#buscar" className="header-link">
+              </HomeSectionLink>
+              <HomeSectionLink section="buscar">
                 Buscar por ID
-              </Link>
+              </HomeSectionLink>
               <Link href="/probar" className="header-link">
                 Probar endpoint
               </Link>
