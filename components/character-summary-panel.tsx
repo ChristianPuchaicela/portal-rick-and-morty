@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SparkIcon } from "@/components/detail-icons";
 import type { SummaryResult } from "@/lib/character-summary";
 
 export function CharacterSummaryPanel({ id }: { id: number }) {
@@ -37,38 +38,71 @@ export function CharacterSummaryPanel({ id }: { id: number }) {
     }
   }
 
-  const source = summary?.source === "gemini" ? "Generado por IA" : "Simulado";
+  const source = summary?.source === "gemini" ? "IA · Gemini" : "Simulado";
+  const message = error || (pending ? "Preparando el resumen…" : summary ? `Resumen disponible. ${source}.` : "");
 
   return (
-    <section className="summary-panel tool-panel" aria-labelledby="summary-title">
-      <div className="summary-toolbar">
-        <h2 id="summary-title" className="search-title">Resumen del personaje</h2>
-        <button type="button" className="search-submit" onClick={requestSummary} aria-disabled={pending}>
+    <section aria-labelledby="summary-title">
+      <header className="insight-header">
+        <div className="section-heading">
+          <span className="section-index" aria-hidden="true">02</span>
+          <div>
+            <p className="eyebrow">Lectura generada · contrastada</p>
+            <h2 id="summary-title" className="search-title">Resumen del multiverso</h2>
+          </div>
+        </div>
+        <button type="button" className="insight-action" onClick={requestSummary} aria-disabled={pending}>
+          <SparkIcon />
           {summary ? "Regenerar resumen" : "Generar resumen con IA"}
         </button>
-      </div>
+      </header>
+
       <p
         role="status"
         aria-atomic="true"
-        className={error ? "summary-feedback text-destructive" : pending ? "summary-feedback text-muted-foreground" : "sr-only"}
+        className={error ? "insight-status" : "sr-only"}
+        data-tone={error ? "error" : undefined}
       >
-        {error || (pending ? "Preparando el resumen…" : summary ? `Resumen disponible. ${source}.` : "")}
+        {message}
       </p>
 
-      {summary && (
-        <div className="summary-result">
-          <p className="summary-source" data-source={summary.source}>{source}</p>
-          {summary.notice && <p className="text-sm text-muted-foreground">{summary.notice}</p>}
-          <p className="hero-description summary-text">{summary.text}</p>
-          <h3 className="mt-5 font-semibold">Datos usados</h3>
-          <dl className="detail-facts mt-2">
-            {summary.facts.map(({ label, value }) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
+      {(pending || summary) && (
+        <div className="insight-panel">
+          {pending && (
+            <div className="insight-skeleton" aria-hidden="true">
+              <span /><span /><span />
+            </div>
+          )}
+
+          {summary && (
+            <div className="insight-result">
+
+              <ol className="insight-lines" role="list" aria-label="Resumen en tres oraciones">
+                {summary.sentences.map((sentence, index) => (
+                  <li key={sentence}>
+                    <span className="insight-line-index" aria-hidden="true">0{index + 1}</span>
+                    <p>{sentence}</p>
+                  </li>
+                ))}
+              </ol>
+
+              {summary.notice && (
+                <p className="insight-notice">{summary.notice} Se muestra el texto de respaldo construido con la ficha.</p>
+              )}
+
+              <div className="insight-facts">
+                <h3>Datos usados</h3>
+                <ul className="fact-chips">
+                  {summary.facts.map(({ label, value }) => (
+                    <li key={label}>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </dl>
+            </div>
+          )}
         </div>
       )}
     </section>

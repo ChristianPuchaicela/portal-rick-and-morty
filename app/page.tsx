@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { CatalogLoading, CharacterCatalog } from "@/components/character-catalog";
 import { CharacterIdForm } from "@/components/character-id-form";
-import { HttpResponseGuide } from "@/components/http-response-guide";
 
 export default function Home() {
   return (
@@ -44,7 +43,6 @@ export default function Home() {
           <CharacterCatalog />
         </Suspense>
       </section>
-      <HttpResponseGuide />
     </main>
   );
 }

@@ -14,6 +14,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
   const router = useRouter();
   const [navigating, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(initialId === undefined ? "" : String(initialId));
   const [error, setError] = useState("");
   const inputId = useId();
   const feedbackId = `${inputId}-feedback`;
@@ -46,9 +47,9 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {/* <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
-        ID del personaje
-      </label> */}
+      <label htmlFor={inputId} className={onConsult ? "mb-2 block text-sm font-semibold" : "sr-only"}>
+        Buscar personaje por ID
+      </label>
       <div className="search-controls">
         <input
           ref={inputRef}
@@ -58,12 +59,17 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
           inputMode="numeric"
           autoComplete="off"
           required
-          defaultValue={initialId}
-          placeholder={onConsult ? undefined : "Por ejemplo, 1"}
+          value={value}
+          placeholder="Por ejemplo, 1"
           readOnly={busy}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? feedbackId : undefined}
-          onChange={() => setError("")}
+          onChange={(event) => {
+            const nextValue = event.currentTarget.value;
+            if (!/^\d*$/.test(nextValue)) return;
+            setValue(nextValue);
+            setError("");
+          }}
           className="search-input"
 
         />

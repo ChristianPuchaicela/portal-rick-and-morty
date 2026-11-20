@@ -32,7 +32,7 @@ Abre [http://localhost:3000](http://localhost:3000). En PowerShell puedes usar `
 
 1. Crea `.env.local` en la raíz con la estructura de [`.env.example`](.env.example). Si el archivo local aún no existe, en PowerShell puedes usar `Copy-Item .env.example .env.local` y en una terminal POSIX, `cp .env.example .env.local`.
 2. Asigna tu clave de Google AI Studio a `GEMINI_API_KEY` dentro de `.env.local`. Git ignora este archivo. El modelo se puede cambiar con `GEMINI_MODEL`. Si está vacío, la aplicación usa [`gemini-3.5-flash-lite`](https://aistudio.google.com/docs/models/gemini-3.5-flash-lite).
-3. Reinicia el servidor y pulsa **Generar resumen con IA** en una ficha. Una respuesta validada de Gemini aparece como **Generado por IA**. Si falta la clave, se agota la cuota o Gemini falla, aparece **Simulado** junto con el motivo.
+3. Reinicia el servidor y pulsa **Generar resumen con IA** en una ficha. Una respuesta validada de Gemini aparece como **IA · Gemini**. Si falta la clave, se agota la cuota o Gemini falla, aparece **Simulado** junto con el motivo.
 
 Si publicas el proyecto, configura las mismas variables en el entorno de servidor del proveedor de alojamiento. Usa los nombres de la plantilla para mantener la clave fuera del código del navegador.
 
@@ -43,6 +43,7 @@ Si publicas el proyecto, configura las mismas variables en el entorno de servido
 | **Next.js con App Router** | Permite renderizar el catálogo y las fichas en el servidor e integrar Gemini en una ruta que mantiene la clave en el servidor. Cada ficha tiene título y descripción propios. Un ID inexistente devuelve HTTP `404`. |
 | **TypeScript estricto** | El código comprueba los campos recibidos de la API antes de renderizarlos. La ficha y el probador reutilizan el acceso al endpoint y el manejo de errores. Los formularios comparten la validación de ID. |
 | **Tailwind CSS y estructura shadcn/ui** | [`app/tokens.css`](app/tokens.css) centraliza la paleta, las familias tipográficas y las medidas del layout. El fondo negro y el verde portal dan identidad a la interfaz. La jerarquía tipográfica y el espacio entre bloques se inspiran en la web de Apple. |
+| **Ficha en tres niveles** | La vista de personaje separa datos de la API, lectura generada y apariciones. Usa tarjetas agrupadas, procedencia explícita y episodios en chips, con los tokens ya definidos en `app/tokens.css`. |
 | **Probador independiente** | El botón ejecuta el GET y muestra el cuerpo recibido en un `<pre>`. La interfaz distingue ID inválido, personaje inexistente, fallo de conexión y otros códigos HTTP. |
 | **Accesibilidad del recorrido** | Los formularios tienen etiquetas y mensajes asociados, el foco es visible y el estado del personaje incluye texto e icono. El catálogo y el probador se adaptan al ancho disponible y respetan la preferencia de movimiento reducido. |
 
@@ -52,16 +53,16 @@ En la [referencia de la Parte 1](docs/endpoint.md) puse primero el propósito y 
 
 Al pulsar el botón, el servidor recibe un ID entero positivo y recupera la ficha original. Extrae el nombre, la especie, el estado, el origen, la última ubicación y la cantidad de episodios. [Implementación de `POST /api/resumen`](app/api/resumen/route.ts)
 
-Gemini compone un párrafo en español eligiendo una oración de cada grupo. El primero presenta al personaje y su estado, el segundo indica sus ubicaciones y el tercero da el número de apariciones. Las opciones permiten variar el tono de ciencia ficción. La temperatura baja y el esquema JSON acotan la salida. El servidor comprueba que cada oración coincida con una opción construida con datos de la API y que el párrafo incluya el nombre.
+Gemini redacta tres oraciones en español —presentación, coordenadas y registro— con tono de archivo para fans de ciencia ficción. La instrucción usa solo los valores de la ficha y prohíbe datos externos, relaciones y menciones de la API. El esquema JSON exige exactamente tres claves y la temperatura baja limita la variación.
 
-Si la salida introduce una ubicación, un episodio u otro dato que no está en la ficha, se descarta. La ruta devuelve un párrafo construido en el servidor con los datos verificados y lo marca **Simulado**. Los campos usados se muestran junto al texto para poder contrastarlo.
+Antes de mostrar el texto, el servidor comprueba que cada oración incluya los campos esperados y que no aparezcan cifras ajenas a la ficha, entidades nuevas, relaciones, vocabulario de la API ni comillas con valores inventados. Si algo no pasa, se descarta y se devuelve el texto de respaldo construido con los datos verificados y marcado **Simulado**. La interfaz separa los datos de la API de la lectura generada, indica su procedencia y muestra los seis campos usados como chips.
 
 | Caso verificado | Resultado |
 | --- | --- |
 | `1`, `9999` y `1.5` en el probador | La API real devolvió HTTP `200` y `404` en los dos primeros casos. El decimal se rechazó antes de enviar la petición. |
 | Rick Sanchez con Gemini sin configurar | La interfaz mostró **Simulado**, con el nombre y los 51 episodios que devolvió la API durante la prueba. |
 | Llamada autenticada a Gemini con Rick Sanchez | La ficha mostró **Generado por IA** y presentó los seis datos usados, incluidos el nombre y los 51 episodios. |
-| Salida de Gemini válida, con una ubicación inventada o sin el nombre | Con respuestas controladas, se aceptó la selección válida y se descartaron las otras dos. |
+| Salida de Gemini con una ubicación inventada, otra cifra o sin el nombre | Con respuestas controladas, se aceptaron las tres oraciones verificadas y se descartaron las que introducían datos nuevos. |
 | Cuota agotada, clave rechazada, HTTP `503` y tiempo de espera | Las pruebas controladas devolvieron el respaldo con un mensaje acorde al fallo. |
 
 Para repetir la prueba autenticada, configura la clave, genera un resumen y confirma que aparezca **Generado por IA** con los datos usados. Los fallos del proveedor se verificaron con respuestas controladas.

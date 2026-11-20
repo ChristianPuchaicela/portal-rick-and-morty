@@ -5,7 +5,12 @@ import { createScope } from "animejs/scope";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
-export function CharacterShowcase({ image, name }: { image: string; name: string }) {
+type CharacterShowcaseProps = {
+  image: string;
+  name: string;
+};
+
+export function CharacterShowcase({ image, name }: CharacterShowcaseProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLImageElement>(null);
@@ -41,18 +46,20 @@ export function CharacterShowcase({ image, name }: { image: string; name: string
   }, [image]);
 
   return (
-    <div className="character-showcase" ref={stageRef}>
-      <div className="character-orbit" ref={orbitRef} aria-hidden="true" />
-      <Image
-        ref={portraitRef}
-        className="detail-image"
-        src={image}
-        alt={`Retrato de ${name}`}
-        width={300}
-        height={300}
-        sizes="(min-width: 48rem) 300px, 65vw"
-        loading="eager"
-      />
+    <div className="portrait-frame">
+      <div className="character-showcase" ref={stageRef}>
+        <div className="character-orbit" ref={orbitRef} aria-hidden="true" />
+        <Image
+          ref={portraitRef}
+          className="detail-image"
+          src={image}
+          alt={`Retrato de ${name}`}
+          width={300}
+          height={300}
+          sizes="(min-width: 56rem) 320px, 80vw"
+          loading="eager"
+        />
+      </div>
     </div>
   );
 }

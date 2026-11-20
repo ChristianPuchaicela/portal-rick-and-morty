@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { EndpointTester } from "@/components/endpoint-tester";
-import { HttpResponseGuide } from "@/components/http-response-guide";
 import { parseCharacterId } from "@/lib/character-id";
 
 export const metadata: Metadata = {
@@ -23,7 +22,6 @@ export default async function TestEndpointPage({
         <p className="hero-description text-muted-foreground">Consulta un personaje por ID e inspecciona la respuesta de la API.</p>
       </header>
       <EndpointTester key={initialId ?? "empty"} initialId={initialId} />
-      <HttpResponseGuide />
     </main>
   );
 }

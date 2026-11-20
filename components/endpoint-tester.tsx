@@ -17,6 +17,7 @@ export function EndpointTester({ initialId }: { initialId?: number }) {
   const success = response?.kind === "success";
   const raw = response && "raw" in response ? response.raw : null;
   const status = response && "status" in response ? response.status : null;
+  const serverError = response?.kind === "http-error" && response.status >= 500;
 
   async function consult(id: number) {
     setCopyMessage("");
@@ -41,25 +42,35 @@ export function EndpointTester({ initialId }: { initialId?: number }) {
         <p className="request-url mt-3 mb-5 text-sm">
           <code><span className="text-primary">GET</span>{" "}{exchange ? characterApiUrl(exchange.id) : "/character/{id}"}</code>
         </p>
-        <CharacterIdForm initialId={initialId} onConsult={consult} pending={pending} />
+        <CharacterIdForm key={initialId} initialId={initialId} onConsult={consult} pending={pending} />
       </section>
 
       <section aria-labelledby="response-title" className="tool-panel">
         <h2 id="response-title" className="search-title">Respuesta</h2>
-        <p
-          role="status"
-          aria-atomic="true"
-          className={response && !success ? "mt-3 text-destructive" : "mt-3 text-muted-foreground"}
-        >
-          {status !== null && <strong className="mr-2 font-mono">HTTP {status}</strong>}
-          {pending
-            ? "Consultando la API…"
-            : success
-              ? "Consulta exitosa."
-              : response
-                ? characterErrorMessage(response)
-                : "La respuesta aparecerá al consultar un personaje."}
-        </p>
+        {serverError && exchange ? (
+          <div className="character-error mt-4">
+            <p className="character-error-code" aria-label={`Error HTTP ${status}`}>{status}</p>
+            <p role="status" className="text-muted-foreground">La API no pudo procesar la solicitud.</p>
+            <button type="button" className="search-submit mt-4" onClick={() => consult(exchange.id)}>
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          <p
+            role="status"
+            aria-atomic="true"
+            className={response && !success ? "mt-3 text-destructive" : "mt-3 text-muted-foreground"}
+          >
+            {status !== null && <strong className="mr-2 font-mono">HTTP {status}</strong>}
+            {pending
+              ? "Consultando la API…"
+              : success
+                ? "Consulta exitosa."
+                : response
+                  ? characterErrorMessage(response)
+                  : "La respuesta aparecerá al consultar un personaje."}
+          </p>
+        )}
 
         {success && (
           <div className="response-character">

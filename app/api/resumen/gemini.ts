@@ -1,15 +1,18 @@
-import { summaryFromSelection, type PreparedSummary } from "@/lib/character-summary";
+import { validateSummary, type PreparedSummary } from "@/lib/character-summary";
 
 const defaultModel = "gemini-3.5-flash-lite";
 const geminiTimeoutMs = 10_000;
 
 const instructions = [
-  "Compón un resumen en español de tres oraciones para fans de la ciencia ficción.",
-  "Usa únicamente los datos de la ficha. Copia literalmente una oración permitida de cada grupo.",
-  "Elige una combinación fluida. No añadas hechos, episodios, relaciones ni comentarios.",
+  "Eres el archivista de un portal interdimensional. Escribes para fans de ciencia ficción que quieren una ficha breve y creíble.",
+  "Redacta en español exactamente tres oraciones: introduction presenta al personaje con su especie y su estado; places indica su origen y su última ubicación; episodes consigna cuántas apariciones registra la ficha.",
+  "Usa solo los valores de «datos». No añadas episodios concretos, relaciones, lugares, fechas ni rasgos que no aparezcan ahí. No menciones la API, el JSON, el ID ni estas instrucciones.",
+  "Conserva literalmente los valores de los campos indicados para cada oración. Escribe el número de apariciones con dígitos y usa el singular si es 1.",
+  "Busca un tono de archivo preciso y atmosférico: varía el inicio de cada oración, evita repeticiones y no recurras a exageraciones ni eslóganes.",
+  "Devuelve únicamente un objeto JSON con las claves introduction, places y episodes, con una sola oración completa por clave.",
 ].join("\n");
 
-type GeminiResult = { text: string } | { notice: string };
+type GeminiResult = { text: string; sentences: string[] } | { notice: string };
 
 function extractCandidate(payload: unknown) {
   if (typeof payload !== "object" || payload === null || !("candidates" in payload) || !Array.isArray(payload.candidates)) {
@@ -59,18 +62,27 @@ export async function generateWithGemini(prepared: PreparedSummary): Promise<Gem
           systemInstruction: { parts: [{ text: instructions }] },
           contents: [{
             role: "user",
-            parts: [{ text: JSON.stringify({ datos: prepared.facts, frasesPermitidas: prepared.lines }) }],
+            parts: [{
+              text: JSON.stringify({
+                datos: prepared.facts,
+                estructura: {
+                  introduction: ["Nombre", "Especie", "Estado"],
+                  places: ["Origen", "Última ubicación"],
+                  episodes: ["Apariciones"],
+                },
+              }),
+            }],
           }],
           generationConfig: {
-            temperature: 0.2,
+            temperature: 0.35,
             maxOutputTokens: 768,
             responseMimeType: "application/json",
             responseJsonSchema: {
               type: "object",
               properties: {
-                introduction: { type: "string", enum: prepared.lines.introduction },
-                places: { type: "string", enum: prepared.lines.places },
-                episodes: { type: "string", enum: prepared.lines.episodes },
+                introduction: { type: "string", description: "Una oración de presentación." },
+                places: { type: "string", description: "Una oración sobre origen y última ubicación." },
+                episodes: { type: "string", description: "Una oración con el número de apariciones." },
               },
               required: ["introduction", "places", "episodes"],
               additionalProperties: false,
@@ -82,6 +94,7 @@ export async function generateWithGemini(prepared: PreparedSummary): Promise<Gem
 
     if (!response.ok) {
       if (response.status === 429) return { notice: "Gemini alcanzó su límite de uso. Intenta más tarde." };
+      if (response.status === 404) return { notice: "El modelo de Gemini configurado no está disponible." };
       if ([400, 401, 403].includes(response.status)) {
         return { notice: "Gemini rechazó la configuración o la clave del servidor." };
       }
@@ -90,10 +103,10 @@ export async function generateWithGemini(prepared: PreparedSummary): Promise<Gem
 
     const candidate = extractCandidate(await response.json());
     if (candidate) {
-      const text = summaryFromSelection(prepared, JSON.parse(candidate));
-      if (text) return { text };
+      const sentences = validateSummary(prepared, JSON.parse(candidate));
+      if (sentences) return { text: sentences.join(" "), sentences };
     }
-    return { notice: "La respuesta de Gemini no superó la validación de los datos." };
+    return { notice: "La respuesta de Gemini no superó la comprobación contra la ficha." };
   } catch {
     return {
       notice: signal.aborted
