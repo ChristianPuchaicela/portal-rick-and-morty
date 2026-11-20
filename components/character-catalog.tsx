@@ -39,8 +39,7 @@ export function CatalogLoading() {
           <div key={index} className="character-placeholder">
             <div className="character-portrait" />
             <div className="character-caption">
-              <div className="skeleton-line skeleton-id" />
-              <div className="skeleton-line skeleton-name" />
+              <div className="skeleton-name" />
             </div>
           </div>
         ))}

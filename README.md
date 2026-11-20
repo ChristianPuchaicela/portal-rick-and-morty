@@ -32,7 +32,7 @@ Abre [http://localhost:3000](http://localhost:3000). En PowerShell puedes usar `
 
 1. Crea `.env.local` en la raíz con la estructura de [`.env.example`](.env.example). Si el archivo local aún no existe, en PowerShell puedes usar `Copy-Item .env.example .env.local` y en una terminal POSIX, `cp .env.example .env.local`.
 2. Asigna tu clave de Google AI Studio a `GEMINI_API_KEY` dentro de `.env.local`. Git ignora este archivo. El modelo se puede cambiar con `GEMINI_MODEL`. Si está vacío, la aplicación usa [`gemini-3.5-flash-lite`](https://aistudio.google.com/docs/models/gemini-3.5-flash-lite).
-3. Reinicia el servidor y pulsa **Generar resumen con IA** en una ficha. Una respuesta validada de Gemini aparece como **IA · Gemini**. Si falta la clave, se agota la cuota o Gemini falla, aparece **Simulado** junto con el motivo.
+3. Reinicia el servidor y pulsa **Generar resumen con IA** en una ficha. Una respuesta que pasó las comprobaciones aparece como **Generado por IA · Gemini**. Si falta la clave, se agota la cuota o Gemini falla, aparece **Simulado** junto con el motivo.
 
 Si publicas el proyecto, configura las mismas variables en el entorno de servidor del proveedor de alojamiento. Usa los nombres de la plantilla para mantener la clave fuera del código del navegador.
 
@@ -53,19 +53,21 @@ En la [referencia de la Parte 1](docs/endpoint.md) puse primero el propósito y 
 
 Al pulsar el botón, el servidor recibe un ID entero positivo y recupera la ficha original. Extrae el nombre, la especie, el estado, el origen, la última ubicación y la cantidad de episodios. [Implementación de `POST /api/resumen`](app/api/resumen/route.ts)
 
-Gemini redacta tres oraciones en español —presentación, coordenadas y registro— con tono de archivo para fans de ciencia ficción. La instrucción usa solo los valores de la ficha y prohíbe datos externos, relaciones y menciones de la API. El esquema JSON exige exactamente tres claves y la temperatura baja limita la variación.
+Gemini redacta tres oraciones en español con tono de archivo para fans de ciencia ficción. La primera presenta al personaje, la segunda describe sus ubicaciones y la tercera indica cuántas apariciones registra. La instrucción limita el contenido a los valores de la ficha. El esquema JSON exige tres claves y la temperatura baja reduce la variación.
 
-Antes de mostrar el texto, el servidor comprueba que cada oración incluya los campos esperados y que no aparezcan cifras ajenas a la ficha, entidades nuevas, relaciones, vocabulario de la API ni comillas con valores inventados. Si algo no pasa, se descarta y se devuelve el texto de respaldo construido con los datos verificados y marcado **Simulado**. La interfaz separa los datos de la API de la lectura generada, indica su procedencia y muestra los seis campos usados como chips.
+Antes de mostrar el texto, el servidor comprueba los campos esperados y el número exacto de apariciones. También busca valores entre comillas que no estén en la ficha y palabras que puedan indicar relaciones o datos externos. Si una comprobación falla, descarta la salida y muestra **Simulado**, construido directamente con los datos de la ficha. La interfaz muestra la procedencia y los seis campos usados.
+
+Estas comprobaciones detectan discrepancias concretas. Para evaluar el significado de una frase libre, comparo cada afirmación con los campos de la ficha. Si encuentro una afirmación nueva que el filtro dejó pasar, la usaría como caso de prueba y mantendría el respaldo hasta corregir la validación.
 
 | Caso verificado | Resultado |
 | --- | --- |
 | `1`, `9999` y `1.5` en el probador | La API real devolvió HTTP `200` y `404` en los dos primeros casos. El decimal se rechazó antes de enviar la petición. |
 | Rick Sanchez con Gemini sin configurar | La interfaz mostró **Simulado**, con el nombre y los 51 episodios que devolvió la API durante la prueba. |
-| Llamada autenticada a Gemini con Rick Sanchez | La ficha mostró **Generado por IA** y presentó los seis datos usados, incluidos el nombre y los 51 episodios. |
+| Llamada autenticada a Gemini con Rick Sanchez | La ficha presentó el resumen generado y los seis datos usados, incluidos el nombre y los 51 episodios. |
 | Salida de Gemini con una ubicación inventada, otra cifra o sin el nombre | Con respuestas controladas, se aceptaron las tres oraciones verificadas y se descartaron las que introducían datos nuevos. |
 | Cuota agotada, clave rechazada, HTTP `503` y tiempo de espera | Las pruebas controladas devolvieron el respaldo con un mensaje acorde al fallo. |
 
-Para repetir la prueba autenticada, configura la clave, genera un resumen y confirma que aparezca **Generado por IA** con los datos usados. Los fallos del proveedor se verificaron con respuestas controladas.
+Para repetir la prueba autenticada, configura la clave, genera un resumen y comprueba la etiqueta de procedencia y los datos usados. Los fallos del proveedor se verificaron con respuestas controladas.
 
 ## Preguntas de criterio
 

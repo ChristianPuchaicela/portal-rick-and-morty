@@ -51,11 +51,10 @@ export async function POST(request: Request) {
 
   const prepared = prepareSummary(result.character);
   const generated = await generateWithGemini(prepared);
-  const summary: SummaryResult = "text" in generated
+  const summary: SummaryResult = "sentences" in generated
     ? {
       source: "gemini",
       facts: prepared.facts,
-      text: generated.text,
       sentences: generated.sentences,
     }
     : simulatedSummary(prepared, generated.notice);

@@ -12,26 +12,17 @@ type CharacterShowcaseProps = {
 
 export function CharacterShowcase({ image, name }: CharacterShowcaseProps) {
   const stageRef = useRef<HTMLDivElement>(null);
-  const orbitRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const stage = stageRef.current;
-    const orbit = orbitRef.current;
     const portrait = portraitRef.current;
-    if (!stage || !orbit || !portrait) return;
+    if (!stage || !portrait) return;
 
     const scope = createScope({ root: stage, mediaQueries: { reduced: "(prefers-reduced-motion: reduce)" } });
     scope.add(() => {
       if (scope.matches.reduced) return;
 
-      animate(orbit, {
-        rotate: [-28, 0],
-        scale: [0.78, 1],
-        opacity: [0.25, 1],
-        duration: 650,
-        ease: "outCubic",
-      });
       animate(portrait, {
         y: [18, 0],
         scale: [0.92, 1],
@@ -48,7 +39,6 @@ export function CharacterShowcase({ image, name }: CharacterShowcaseProps) {
   return (
     <div className="portrait-frame">
       <div className="character-showcase" ref={stageRef}>
-        <div className="character-orbit" ref={orbitRef} aria-hidden="true" />
         <Image
           ref={portraitRef}
           className="detail-image"

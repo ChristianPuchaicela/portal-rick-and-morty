@@ -1,21 +1,14 @@
-import { characterStatuses } from "@/lib/character-labels";
+import { characterStatuses, displayCharacterValue } from "@/lib/character-labels";
 import type { Character } from "@/lib/characters";
 
-export type SummaryFact = { label: string; value: string };
-export type SummarySlot = "introduction" | "places" | "episodes";
+type SummaryFact = { label: string; value: string };
 
 export type SummaryResult = {
   source: "gemini" | "simulated";
-  text: string;
   sentences: string[];
   facts: SummaryFact[];
   notice?: string;
 };
-
-function displayData(value: string) {
-  const cleaned = value.trim();
-  return cleaned.toLowerCase() === "unknown" ? "Desconocido" : cleaned || "Sin especificar";
-}
 
 function normalize(value: string) {
   return value
@@ -29,10 +22,10 @@ function normalize(value: string) {
 
 export function prepareSummary(character: Character) {
   const name = character.name;
-  const species = displayData(character.species);
+  const species = displayCharacterValue(character.species);
   const status = characterStatuses[character.status].text;
-  const origin = displayData(character.origin.name);
-  const location = displayData(character.location.name);
+  const origin = displayCharacterValue(character.origin.name);
+  const location = displayCharacterValue(character.location.name);
   const count = character.episode.length;
   const appearances = count === 1 ? "aparición" : "apariciones";
   const facts: SummaryFact[] = [
@@ -78,13 +71,12 @@ export function prepareSummary(character: Character) {
 export type PreparedSummary = ReturnType<typeof prepareSummary>;
 
 /**
- * Acepta tres frases redactadas libremente solo si conservan los hechos de la ficha
- * y no introducen entidades, cifras, relaciones ni vocabulario de la propia API.
+ * Comprueba campos esperados y patrones que pueden indicar datos no respaldados.
  */
 export function validateSummary(prepared: PreparedSummary, candidate: unknown): string[] | null {
   if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) return null;
   const record = candidate as Record<string, unknown>;
-  const slots: SummarySlot[] = ["introduction", "places", "episodes"];
+  const slots = ["introduction", "places", "episodes"] as const;
   if (Object.keys(record).length !== 3 || !slots.every((slot) => typeof record[slot] === "string")) return null;
 
   const sentences = slots.map((slot) => (record[slot] as string).replace(/\s+/g, " ").trim());
@@ -108,7 +100,8 @@ export function validateSummary(prepared: PreparedSummary, candidate: unknown): 
     if (!values.every((value) => normalized[index].includes(normalize(value)))) return null;
   }
   const episodeNumbers = normalized[2].match(/\d+/g);
-  if (!episodeNumbers?.includes(prepared.expected.episodes) || !/(?:aparici|episod)/.test(normalized[2])) return null;
+  if (episodeNumbers?.length !== 1 || episodeNumbers[0] !== prepared.expected.episodes) return null;
+  if (!/(?:aparici|episod)/.test(normalized[2]) || /\b(?:no|nunca|jamas)\b/.test(normalized[2])) return null;
 
   const numbers = [...text.matchAll(/\d+/g)].map((match) => match[0]);
   if (numbers.some((number) => !prepared.allowedNumbers.includes(number))) return null;
@@ -137,7 +130,6 @@ export function simulatedSummary(prepared: PreparedSummary, notice: string): Sum
     source: "simulated",
     facts: prepared.facts,
     sentences,
-    text: sentences.join(" "),
     notice,
   };
 }

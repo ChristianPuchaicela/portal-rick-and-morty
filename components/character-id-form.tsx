@@ -14,7 +14,6 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
   const router = useRouter();
   const [navigating, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState(initialId === undefined ? "" : String(initialId));
   const [error, setError] = useState("");
   const inputId = useId();
   const feedbackId = `${inputId}-feedback`;
@@ -47,7 +46,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <label htmlFor={inputId} className={onConsult ? "mb-2 block text-sm font-semibold" : "sr-only"}>
+      <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
         Buscar personaje por ID
       </label>
       <div className="search-controls">
@@ -59,24 +58,18 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
           inputMode="numeric"
           autoComplete="off"
           required
-          value={value}
+          defaultValue={initialId}
           placeholder="Por ejemplo, 1"
           readOnly={busy}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? feedbackId : undefined}
-          onChange={(event) => {
-            const nextValue = event.currentTarget.value;
-            if (!/^\d*$/.test(nextValue)) return;
-            setValue(nextValue);
-            setError("");
-          }}
+          onChange={() => setError("")}
           className="search-input"
-
         />
         <button
           type="submit"
           className="search-submit search-submit-icon"
-          aria-label="Buscar personaje"
+          aria-label={onConsult ? "Consultar personaje" : "Buscar personaje"}
           aria-disabled={busy}
         >
           <svg

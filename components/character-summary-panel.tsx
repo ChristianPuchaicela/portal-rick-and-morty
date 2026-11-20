@@ -38,7 +38,7 @@ export function CharacterSummaryPanel({ id }: { id: number }) {
     }
   }
 
-  const source = summary?.source === "gemini" ? "IA · Gemini" : "Simulado";
+  const source = summary?.source === "gemini" ? "Generado por IA · Gemini" : "Simulado";
   const message = error || (pending ? "Preparando el resumen…" : summary ? `Resumen disponible. ${source}.` : "");
 
   return (
@@ -76,7 +76,7 @@ export function CharacterSummaryPanel({ id }: { id: number }) {
 
           {summary && (
             <div className="insight-result">
-
+              <p className="provenance-badge" data-source={summary.source}>{source}</p>
               <ol className="insight-lines" role="list" aria-label="Resumen en tres oraciones">
                 {summary.sentences.map((sentence, index) => (
                   <li key={sentence}>

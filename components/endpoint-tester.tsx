@@ -42,7 +42,7 @@ export function EndpointTester({ initialId }: { initialId?: number }) {
         <p className="request-url mt-3 mb-5 text-sm">
           <code><span className="text-primary">GET</span>{" "}{exchange ? characterApiUrl(exchange.id) : "/character/{id}"}</code>
         </p>
-        <CharacterIdForm key={initialId} initialId={initialId} onConsult={consult} pending={pending} />
+        <CharacterIdForm initialId={initialId} onConsult={consult} pending={pending} />
       </section>
 
       <section aria-labelledby="response-title" className="tool-panel">

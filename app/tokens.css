@@ -40,14 +40,11 @@
 
   /* Superficies derivadas: mismo contraste, menos ruido visual */
   --surface-tint: color-mix(in srgb, var(--primary) 8%, var(--card));
-  --surface-tint-strong: color-mix(in srgb, var(--primary) 14%, var(--card));
-  --line-tint: color-mix(in srgb, var(--primary) 38%, var(--border));
 
   /* Tipografía */
   --type-display: "Space Grotesk Variable", system-ui, sans-serif;
   --type-body: "Inter Variable", system-ui, sans-serif;
   --type-code: "IBM Plex Mono", ui-monospace, monospace;
-  --type-hero: clamp(2.375rem, 1.5rem + 4.4vw, 6rem);
   --type-heading: clamp(1.625rem, 1.25rem + 1vw, 2.375rem);
   --type-lead: clamp(1rem, 0.95rem + 0.4vw, 1.25rem);
   --type-small: 0.875rem;

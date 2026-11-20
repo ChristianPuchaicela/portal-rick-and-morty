@@ -12,7 +12,7 @@ const instructions = [
   "Devuelve únicamente un objeto JSON con las claves introduction, places y episodes, con una sola oración completa por clave.",
 ].join("\n");
 
-type GeminiResult = { text: string; sentences: string[] } | { notice: string };
+type GeminiResult = { sentences: string[] } | { notice: string };
 
 function extractCandidate(payload: unknown) {
   if (typeof payload !== "object" || payload === null || !("candidates" in payload) || !Array.isArray(payload.candidates)) {
@@ -104,7 +104,7 @@ export async function generateWithGemini(prepared: PreparedSummary): Promise<Gem
     const candidate = extractCandidate(await response.json());
     if (candidate) {
       const sentences = validateSummary(prepared, JSON.parse(candidate));
-      if (sentences) return { text: sentences.join(" "), sentences };
+      if (sentences) return { sentences };
     }
     return { notice: "La respuesta de Gemini no superó la comprobación contra la ficha." };
   } catch {

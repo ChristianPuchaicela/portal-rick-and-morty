@@ -1,5 +1,10 @@
 import type { Character } from "@/lib/characters";
 
+export function displayCharacterValue(value: string) {
+  const cleaned = value.trim();
+  return cleaned.toLowerCase() === "unknown" ? "Desconocido" : cleaned || "Sin especificar";
+}
+
 export const characterStatuses = {
   Alive: { text: "Vivo", icon: "●" },
   Dead: { text: "Fallecido", icon: "✕" },

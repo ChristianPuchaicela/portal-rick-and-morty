@@ -168,16 +168,6 @@ html {
   padding-block-end: clamp(1.5rem, 3vw, 3.5rem);
 }
 
-.hero-title {
-  margin-block: 0.875rem 1rem;
-  font-family: var(--type-display);
-  font-size: var(--type-hero);
-  font-weight: 700;
-  line-height: 0.99;
-  letter-spacing: var(--tracking-display);
-  overflow-wrap: anywhere;
-}
-
 .hero-description {
   max-inline-size: 50ch;
   margin-inline: auto;
@@ -197,8 +187,12 @@ html {
   font-size: var(--type-small);
 }
 
-.hero-logo {
+.hero-brand {
   inline-size: min(100%, 42rem);
+}
+
+.hero-brand img {
+  inline-size: 100%;
   block-size: auto;
 }
 
@@ -213,33 +207,11 @@ html {
   scroll-margin-block: 1rem;
 }
 
-.search-panel .dot-pattern {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  inline-size: 100%;
-  block-size: 100%;
-  color: var(--primary);
-  opacity: 0.32;
-  mask-image: radial-gradient(ellipse at center, black, transparent 72%);
-  pointer-events: none;
-}
-
 .search-panel form {
   inline-size: min(100%, 39rem);
   padding: clamp(0.875rem, 2vw, 1.25rem);
   border-radius: var(--radius-panel);
   text-align: start;
-}
-
-.search-controls {
-  position: relative;
-}
-
-.search-controls .search-input {
-  min-block-size: calc(var(--control-size) + 0.5rem);
-  padding-inline-end: calc(var(--control-size) + 0.75rem);
-  background: var(--card);
 }
 
 .search-controls .search-submit-icon {
@@ -259,20 +231,25 @@ html {
 }
 
 .search-controls {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
 }
 
 .search-input {
   inline-size: 100%;
   min-inline-size: 0;
   flex: 1 1 12rem;
-  min-block-size: var(--control-size);
+  min-block-size: calc(var(--control-size) + 0.5rem);
   padding: 0.625rem 0.875rem;
+  padding-inline-end: calc(var(--control-size) + 0.75rem);
+  border: 1px solid var(--input);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--input) 85%, var(--secondary));
+  background: var(--card);
   font-family: var(--type-code);
+}
+
+.search-input[aria-invalid="true"] {
+  border-color: var(--destructive);
 }
 
 .search-input::placeholder {
@@ -402,14 +379,6 @@ html {
   border-radius: var(--radius-panel);
 }
 
-.character-showcase::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
-
-
 .detail-image {
   position: relative;
   inline-size: 72%;
@@ -485,18 +454,6 @@ html {
 .status-badge[data-status="unknown"] {
   background: color-mix(in srgb, var(--status-not-found) 10%, var(--card));
   color: var(--status-not-found);
-}
-
-.dossier-note {
-  max-inline-size: 54ch;
-  margin-block: 1.125rem 0;
-  color: var(--muted-foreground);
-  line-height: 1.65;
-}
-
-.dossier-note strong {
-  color: var(--foreground);
-  font-weight: 600;
 }
 
 .dossier-actions {
@@ -680,13 +637,6 @@ html {
   color: var(--destructive);
 }
 
-.insight-empty {
-  max-inline-size: 62ch;
-  margin: 1.25rem 0 0;
-  color: var(--muted-foreground);
-  line-height: 1.65;
-}
-
 .insight-skeleton {
   display: grid;
   gap: 0.625rem;
@@ -714,24 +664,10 @@ html {
   }
 }
 
-.insight-provenance {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  margin-block-end: 1.125rem;
-}
-
-.insight-provenance p {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: var(--type-small);
-}
-
 .provenance-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  margin-block-end: 1.125rem;
   padding: 0.3rem 0.65rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--status-success) 10%, var(--card));
@@ -831,20 +767,11 @@ html {
   background: var(--card);
 }
 
-.episodes-overview {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-block-end: 1rem;
-}
-
 .episode-stat {
   display: flex;
   align-items: baseline;
   gap: 0.625rem;
-  margin: 0;
+  margin: 0 0 1rem;
 }
 
 .episode-stat strong {
@@ -1039,11 +966,6 @@ html {
   padding: clamp(0.625rem, 1.5vw, 1rem);
 }
 
-.character-id {
-  color: var(--muted-foreground);
-  font-size: 0.8125rem;
-}
-
 .character-name {
   display: flex;
   justify-content: center;
@@ -1069,19 +991,11 @@ html {
   }
 }
 
-.skeleton-line {
-  border-radius: var(--radius);
-  background: var(--border);
-}
-
-.skeleton-id {
-  inline-size: 2.5rem;
-  block-size: 0.75rem;
-}
-
 .skeleton-name {
   inline-size: min(72%, 10rem);
   block-size: 1.25rem;
+  border-radius: var(--radius);
+  background: var(--border);
 }
 
 .catalog-notice {
@@ -1089,10 +1003,6 @@ html {
   padding: var(--panel-padding);
   border-radius: var(--radius);
   background: var(--card);
-}
-
-.catalog-notice button[aria-disabled="true"] {
-  cursor: wait;
 }
 
 @media (min-width: 25rem) {

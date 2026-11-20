@@ -9,7 +9,7 @@ import { CharacterSummaryPanel } from "@/components/character-summary-panel";
 import { ArchiveIcon, CoordinatesIcon, IdentityIcon } from "@/components/detail-icons";
 import { RequestRetry } from "@/components/request-retry";
 import { parseCharacterId } from "@/lib/character-id";
-import { characterGenders } from "@/lib/character-labels";
+import { characterGenders, displayCharacterValue } from "@/lib/character-labels";
 import { characterApiUrl, characterErrorMessage, getCharacter } from "@/lib/characters";
 
 type DetailProps = { params: Promise<{ id: string }> };
@@ -36,10 +36,6 @@ export async function generateMetadata({ params }: DetailProps): Promise<Metadat
 }
 
 const dateFormat = new Intl.DateTimeFormat("es", { dateStyle: "long", timeZone: "UTC" });
-
-function displayValue(value: string) {
-  return value.trim().toLowerCase() === "unknown" ? "Desconocido" : value.trim() || "Sin especificar";
-}
 
 function SectionHeading({ index, eyebrow, title, id }: { index: string; eyebrow: string; title: string; id: string }) {
   return (
@@ -91,13 +87,13 @@ export default async function CharacterPage({ params }: DetailProps) {
   const { character } = result;
   const placeValue = (place: { name: string; url: string }) => (
     place.url
-      ? <a href={place.url} className="inline-data-link">{displayValue(place.name)}</a>
-      : displayValue(place.name)
+      ? <a href={place.url} className="inline-data-link">{displayCharacterValue(place.name)}</a>
+      : displayCharacterValue(place.name)
   );
 
   const identityFacts: { label: string; value: ReactNode }[] = [
-    { label: "Especie", value: displayValue(character.species) },
-    { label: "Tipo", value: displayValue(character.type) },
+    { label: "Especie", value: displayCharacterValue(character.species) },
+    { label: "Tipo", value: displayCharacterValue(character.type) },
     { label: "Género", value: characterGenders[character.gender] },
   ];
 
@@ -116,7 +112,7 @@ export default async function CharacterPage({ params }: DetailProps) {
   ];
 
   return (
-    <main id="contenido" tabIndex={-1} className="shell inner-page detail-page">
+    <main id="contenido" tabIndex={-1} className="shell inner-page">
       <nav className="detail-breadcrumb" aria-label="Ruta de navegación">
         <Link href="/#personajes">Personajes</Link>
         <span aria-hidden="true">/</span>
@@ -134,7 +130,7 @@ export default async function CharacterPage({ params }: DetailProps) {
             <h1 id="character-title" className="inner-title">{character.name}</h1>
             <div className="identity-chips">
               <CharacterStatus status={character.status} badge />
-              <span className="meta-chip">{displayValue(character.species)}</span>
+              <span className="meta-chip">{displayCharacterValue(character.species)}</span>
               <span className="meta-chip">{characterGenders[character.gender]}</span>
             </div>
           </div>
@@ -155,15 +151,10 @@ export default async function CharacterPage({ params }: DetailProps) {
           <section aria-labelledby="episodes-title">
             <SectionHeading index="03" eyebrow="Fuente: API" title="Apariciones" id="episodes-title" />
             <div className="episodes-panel">
-              <div className="episodes-overview">
-                <p className="episode-stat">
-                  <strong>{character.episode.length}</strong>
-                  <span>{character.episode.length === 1 ? "episodio registrado" : "episodios registrados"}</span>
-                </p>
-                <a className="header-link text-sm text-secondary-foreground" href={characterApiUrl(character.id)}>
-                  Ver recurso completo ↗
-                </a>
-              </div>
+              <p className="episode-stat">
+                <strong>{character.episode.length}</strong>
+                <span>{character.episode.length === 1 ? "episodio registrado" : "episodios registrados"}</span>
+              </p>
               {character.episode.length > 0 ? (
                 <details className="episodes-disclosure" open={character.episode.length <= 6}>
                   <summary>Ver lista de apariciones ({character.episode.length})</summary>
@@ -186,16 +177,14 @@ export default async function CharacterPage({ params }: DetailProps) {
               )}
             </div>
           </section>
-          <section>
-            <div className="dossier-actions">
-              <Link className="search-submit inline-flex items-center" href={`/probar?id=${character.id}`}>
-                Probar endpoint
-              </Link>
-              <a className="header-link text-sm text-secondary-foreground" href={characterApiUrl(character.id)}>
-                Ver JSON original ↗
-              </a>
-            </div>
-          </section>
+          <div className="dossier-actions">
+            <Link className="search-submit inline-flex items-center" href={`/probar?id=${character.id}`}>
+              Probar endpoint
+            </Link>
+            <a className="header-link text-sm text-secondary-foreground" href={characterApiUrl(character.id)}>
+              Ver JSON original ↗
+            </a>
+          </div>
         </div>
       </article>
     </main>
