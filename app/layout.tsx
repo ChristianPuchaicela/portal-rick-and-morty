@@ -21,7 +21,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <span aria-hidden="true" className="brand-mark" />
               Portal de personajes
             </Link>
-            <nav aria-label="Principal">
+            <nav aria-label="Principal" className="flex flex-wrap gap-x-5">
+              <Link href="/#personajes" className="header-link text-sm font-semibold text-secondary-foreground">
+                Personajes
+              </Link>
               <Link href="/#buscar" className="header-link text-sm font-semibold text-secondary-foreground">
                 Buscar por ID
               </Link>

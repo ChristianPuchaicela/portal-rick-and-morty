@@ -2,16 +2,17 @@
   color-scheme: dark;
 
   /* Paleta */
-  --palette-space: #0b1220;
-  --palette-panel: #131e30;
-  --palette-inset: #0e1726;
-  --palette-line: #2a3a50;
-  --palette-field: #69819a;
+  --palette-space: #000000;
+  --palette-panel: #141414;
+  --palette-inset: #0a0a0a;
+  --palette-line: #343434;
+  --palette-field: #767676;
   --palette-portal: #97ce4c;
   --palette-ice: #bdeaf2;
   --palette-white: #f9f9f9;
-  --palette-fog: #b4c2d3;
+  --palette-fog: #bdbdbd;
   --palette-coral: #ffada6;
+  --palette-amber: #ffd28a;
 
   /* Roles de interfaz compartidos con shadcn/ui */
   --background: var(--palette-space);
@@ -30,6 +31,9 @@
   --accent: var(--primary);
   --accent-foreground: var(--primary-foreground);
   --destructive: var(--palette-coral);
+  --status-success: var(--primary);
+  --status-not-found: var(--palette-amber);
+  --status-server-error: var(--destructive);
   --border: var(--palette-line);
   --input: var(--palette-field);
   --ring: var(--primary);

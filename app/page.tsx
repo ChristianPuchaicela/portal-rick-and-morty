@@ -1,4 +1,7 @@
+import { Suspense } from "react";
+import { CatalogLoading, CharacterCatalog } from "@/components/character-catalog";
 import { CharacterIdForm } from "@/components/character-id-form";
+import { HttpResponseGuide } from "@/components/http-response-guide";
 import { DotPattern } from "@/components/ui/dot-pattern";
 
 export default function Home() {
@@ -31,6 +34,13 @@ export default function Home() {
         </div>
         <CharacterIdForm />
       </section>
+      <section id="personajes" className="catalog-section" aria-labelledby="catalog-title">
+        <h2 id="catalog-title" className="search-title">Personajes</h2>
+        <Suspense fallback={<CatalogLoading />}>
+          <CharacterCatalog />
+        </Suspense>
+      </section>
+      <HttpResponseGuide />
     </main>
   );
 }
