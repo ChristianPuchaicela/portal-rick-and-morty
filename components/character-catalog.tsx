@@ -1,11 +1,16 @@
 import Image from "next/image";
+import { connection } from "next/server";
 import { characterApiUrl, getFirstCharacterPage, type CharacterSummary } from "@/lib/characters";
 import { CatalogRetry } from "@/components/catalog-retry";
 
 function CharacterCard({ character }: { character: CharacterSummary }) {
   return (
     <li>
-      <a className="character-card" href={characterApiUrl(character.id)} aria-labelledby={`character-name-${character.id} character-action-${character.id}`}>
+      <a
+        className="character-card"
+        href={characterApiUrl(character.id)}
+        aria-labelledby={`character-name-${character.id} character-action-${character.id}`}
+      >
         <div className="character-portrait">
           <Image
             src={character.image}
@@ -48,6 +53,8 @@ export function CatalogLoading() {
 }
 
 export async function CharacterCatalog() {
+  await connection();
+
   let characters: CharacterSummary[];
 
   try {
