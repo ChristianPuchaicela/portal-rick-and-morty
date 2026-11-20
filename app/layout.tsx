@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 
@@ -17,18 +18,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </a>
         <header className="site-header">
           <div className="shell header-content">
-            <Link href="/#inicio" className="header-link font-display font-bold">
-              <span aria-hidden="true" className="brand-mark" />
-              Portal de <span className="text-primary">personajes</span>
+            <Link href="/#inicio" className="header-link">
+              <Image src="/icons8-rick-sanchez.svg" width={44} height={44} alt="Rick Sanchez · Inicio" />
             </Link>
-            <nav aria-label="Principal" className="flex flex-wrap gap-x-5">
-              <Link href="/#personajes" className="header-link text-sm font-semibold text-secondary-foreground">
+            <nav aria-label="Principal" className="primary-nav">
+              <Link href="/#personajes" className="header-link">
                 Personajes
               </Link>
-              <Link href="/#buscar" className="header-link text-sm font-semibold text-secondary-foreground">
+              <Link href="/#buscar" className="header-link">
                 Buscar por ID
               </Link>
-              <Link href="/probar" className="header-link text-sm font-semibold text-secondary-foreground">
+              <Link href="/probar" className="header-link">
                 Probar endpoint
               </Link>
             </nav>

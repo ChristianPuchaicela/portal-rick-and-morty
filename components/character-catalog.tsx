@@ -25,7 +25,6 @@ function CharacterCard({ character }: { character: CharacterSummary }) {
         <div className="character-caption">
           <h3 className="character-name">{character.name}</h3>
         </div>
-        <span className="character-card-action">Ver detalle <span aria-hidden="true">↗</span></span>
       </Link>
     </li>
   );

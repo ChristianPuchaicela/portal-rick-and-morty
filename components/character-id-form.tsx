@@ -16,7 +16,6 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const inputId = useId();
-  const hintId = `${inputId}-hint`;
   const feedbackId = `${inputId}-feedback`;
   const busy = pending || navigating;
 
@@ -47,9 +46,9 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
+      {/* <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
         ID del personaje
-      </label>
+      </label> */}
       <div className="search-controls">
         <input
           ref={inputRef}
@@ -60,20 +59,37 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
           autoComplete="off"
           required
           defaultValue={initialId}
-          placeholder={onConsult ? undefined : "Ej. 1"}
+          placeholder={onConsult ? undefined : "Por ejemplo, 1"}
           readOnly={busy}
           aria-invalid={Boolean(error) || undefined}
-          aria-describedby={error ? `${hintId} ${feedbackId}` : hintId}
+          aria-describedby={error ? feedbackId : undefined}
           onChange={() => setError("")}
           className="search-input"
+
         />
-        <button type="submit" className="search-submit" aria-disabled={busy}>
-          {onConsult ? "Consultar personaje" : "Buscar personaje"}
+        <button
+          type="submit"
+          className={onConsult ? "search-submit" : "search-submit search-submit-icon"}
+          aria-label={onConsult ? undefined : "Buscar personaje"}
+          aria-disabled={busy}
+        >
+          {onConsult ? "Consultar personaje" : (
+            <svg
+              aria-hidden="true"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
+          )}
         </button>
       </div>
-      <p id={hintId} className="mt-2 text-sm text-muted-foreground">
-        Escribe un entero positivo. Por ejemplo, 1.
-      </p>
       <p
         id={feedbackId}
         role="status"

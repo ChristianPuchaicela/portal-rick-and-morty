@@ -89,7 +89,7 @@
 }
 
 html {
-  scroll-padding-block-start: 9.5rem;
+  scroll-padding-block-start: 10.75rem;
 }
 
 .site-header {
@@ -97,7 +97,7 @@ html {
   inset-block-start: 0;
   z-index: 5;
   background: var(--background);
-  border-block-end: 1px solid var(--border);
+  box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--background) 70%, transparent);
 }
 
 .header-content {
@@ -121,22 +121,35 @@ html {
   text-underline-offset: 0.25em;
 }
 
-.brand-mark {
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid var(--primary);
+.primary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: var(--radius-panel);
+  background: var(--card);
 }
 
-.brand-mark::after {
-  content: "";
-  inline-size: 0.875rem;
-  block-size: 0.5rem;
-  border: 2px solid var(--primary);
-  border-radius: 50%;
-  transform: rotate(-40deg);
+.site-header .header-link {
+  border-radius: 999px;
+  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+}
+
+.site-header .header-link:hover,
+.site-header .header-link:focus-visible {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.header-content>.header-link {
+  padding-inline: 0.375rem 0.75rem;
+}
+
+.primary-nav .header-link {
+  padding-inline: 0.625rem;
+  color: var(--secondary-foreground);
+  font-size: var(--type-small);
+  font-weight: 600;
 }
 
 .hero {
@@ -198,6 +211,7 @@ html {
   display: grid;
   justify-items: center;
   gap: 1.25rem;
+  text-align: center;
   padding-block: 1rem clamp(1.5rem, 4vw, 3rem);
   scroll-margin-block: 1rem;
 }
@@ -217,26 +231,24 @@ html {
 .search-panel form {
   inline-size: min(100%, 39rem);
   padding: clamp(0.875rem, 2vw, 1.25rem);
-  border: 1px solid var(--border);
   border-radius: var(--radius-panel);
-  background: var(--card);
-  box-shadow: 0 1rem 3rem color-mix(in srgb, var(--primary) 8%, transparent);
-}
-
-.search-panel form:focus-within {
-  border-color: var(--primary);
+  text-align: start;
 }
 
 .search-panel .search-controls {
-  display: grid;
-  justify-items: end;
+  position: relative;
 }
 
 .search-panel .search-input {
-  min-block-size: 3.25rem;
+  min-block-size: calc(var(--control-size) + 0.5rem);
+  padding-inline-end: calc(var(--control-size) + 0.75rem);
 }
 
-.search-panel .search-submit {
+.search-panel .search-submit-icon {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0.25rem;
+  transform: translateY(-50%);
   border-radius: 999px;
 }
 
@@ -260,14 +272,13 @@ html {
   flex: 1 1 12rem;
   min-block-size: var(--control-size);
   padding: 0.625rem 0.875rem;
-  border: 1px solid var(--input);
   border-radius: var(--radius);
-  background: var(--secondary);
+  background: color-mix(in srgb, var(--input) 85%, var(--secondary));
   font-family: var(--type-code);
 }
 
-.search-input[aria-invalid="true"] {
-  border-color: var(--destructive);
+.search-input::placeholder {
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .search-submit {
@@ -283,6 +294,18 @@ html {
 
 .search-submit:hover {
   background: var(--primary-hover);
+}
+
+.search-submit-icon,
+.search-submit-icon:hover {
+  background: var(--secondary-foreground);
+}
+
+.search-submit-icon {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--control-size);
+  padding: 0;
 }
 
 .search-submit[aria-disabled="true"] {
@@ -306,7 +329,6 @@ html {
 .detail-panel,
 .tool-panel {
   padding: var(--panel-padding);
-  border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: var(--card);
 }
@@ -329,7 +351,6 @@ html {
   max-inline-size: 30rem;
   margin-inline: auto;
   aspect-ratio: 1.1;
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background:
     radial-gradient(ellipse at center, color-mix(in srgb, var(--primary) 28%, transparent), transparent 70%),
@@ -351,7 +372,6 @@ html {
   inline-size: min(65%, 18.75rem);
   block-size: auto;
   aspect-ratio: 1;
-  border: 2px solid var(--secondary-foreground);
   border-radius: 50%;
   box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--primary) 18%, transparent);
   object-fit: cover;
@@ -363,7 +383,7 @@ html {
   gap: 0.75rem 1.375rem;
 }
 
-.detail-facts > div {
+.detail-facts>div {
   border-block-start: 1px solid var(--border);
   padding-block-start: 0.625rem;
 }
@@ -431,8 +451,8 @@ html {
   display: inline-block;
   margin-block-end: 0.5rem;
   padding: 0.25rem 0.625rem;
-  border: 1px solid currentColor;
   border-radius: var(--radius);
+  background: color-mix(in srgb, currentColor 12%, var(--secondary));
   color: var(--status-success);
   font-family: var(--type-code);
   font-size: var(--type-small);
@@ -472,8 +492,8 @@ html {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
   border-radius: var(--radius);
+  background: var(--card);
   color: var(--secondary-foreground);
 }
 
@@ -493,7 +513,6 @@ html {
 .request-url,
 .json-output {
   padding: 0.75rem;
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--secondary);
   overflow-wrap: anywhere;
@@ -565,7 +584,6 @@ html {
   flex-direction: column;
   block-size: 100%;
   overflow: hidden;
-  border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: var(--card);
 }
@@ -596,6 +614,9 @@ html {
 }
 
 .character-name {
+  display: flex;
+  justify-content: center;
+  color: var(--secondary-foreground);
   font-family: var(--type-display);
   font-size: clamp(1rem, 0.875rem + 0.4vw, 1.25rem);
   font-weight: 700;
@@ -603,40 +624,8 @@ html {
   overflow-wrap: anywhere;
 }
 
-.character-card-action {
-  position: absolute;
-  inset-block-start: 0.625rem;
-  inset-inline-start: 0.625rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.625rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--secondary);
-  color: var(--foreground);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.character-card-action span {
+.character-card:is(:hover, :focus-visible) .character-name {
   color: var(--primary);
-}
-
-.character-card:focus-visible .character-name {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
-@media (hover: hover) {
-  .character-card:hover {
-    border-color: var(--primary);
-  }
-
-  .character-card:hover .character-name {
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -667,7 +656,6 @@ html {
 .catalog-notice {
   margin-block-start: 1rem;
   padding: var(--panel-padding);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
 }
@@ -683,13 +671,21 @@ html {
   margin-block-start: 1rem;
 }
 
-@media (min-width: 37rem) {
+@media (min-width: 25rem) {
   html {
-    scroll-padding-block-start: 4.25rem;
+    scroll-padding-block-start: 7.5rem;
   }
+}
 
+@media (min-width: 37rem) {
   .character-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 44rem) {
+  html {
+    scroll-padding-block-start: 5rem;
   }
 }
 
@@ -707,7 +703,6 @@ html {
 
 .response-card {
   padding: clamp(1rem, 2vw, 1.5rem);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
 }
@@ -748,6 +743,8 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
+  .site-header .header-link,
   .search-submit {
     transition: none;
   }
