@@ -998,6 +998,16 @@ html {
   background: var(--border);
 }
 
+.detail-skeleton .skeleton-block {
+  background: var(--border);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .detail-skeleton {
+    animation: insight-pulse 1.2s ease-in-out infinite;
+  }
+}
+
 .catalog-notice {
   margin-block-start: 1rem;
   padding: var(--panel-padding);
