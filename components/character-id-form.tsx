@@ -60,6 +60,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
           autoComplete="off"
           required
           defaultValue={initialId}
+          placeholder={onConsult ? undefined : "Ej. 1"}
           readOnly={busy}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? `${hintId} ${feedbackId}` : hintId}
@@ -77,7 +78,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
         id={feedbackId}
         role="status"
         aria-atomic="true"
-        className={error ? "mt-2 text-sm text-destructive" : "mt-2 text-sm text-muted-foreground"}
+        className={error ? "text-sm text-destructive not-empty:mt-2" : "text-sm text-muted-foreground not-empty:mt-2"}
       >
         {error || (navigating ? "Abriendo la ficha…" : "")}
       </p>

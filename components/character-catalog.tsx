@@ -13,23 +13,19 @@ function CharacterCard({ character }: { character: CharacterSummary }) {
         href={characterPath(character.id)}
         prefetch={false}
       >
-        <div className="character-portrait" aria-hidden="true">
+        <div className="character-portrait">
           <Image
             src={character.image}
-            alt={`Retrato de ${character.name}`}
+            alt=""
             width={300}
             height={300}
             sizes="(min-width: 80rem) 15rem, (min-width: 68rem) 20vw, (min-width: 54rem) 25vw, (min-width: 37rem) 33vw, 50vw"
           />
         </div>
         <div className="character-caption">
-          <span className="character-id font-mono">ID {character.id}</span>
-          <div className="character-caption-row">
-            <h3 className="character-name">{character.name}</h3>
-            <span className="character-arrow" aria-hidden="true">→</span>
-          </div>
-          <span className="sr-only">Ver ficha</span>
+          <h3 className="character-name">{character.name}</h3>
         </div>
+        <span className="character-card-action">Ver detalle <span aria-hidden="true">↗</span></span>
       </Link>
     </li>
   );

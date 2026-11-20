@@ -17,9 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </a>
         <header className="site-header">
           <div className="shell header-content">
-            <Link href="/" className="header-link font-display font-bold">
+            <Link href="/#inicio" className="header-link font-display font-bold">
               <span aria-hidden="true" className="brand-mark" />
-              Portal de personajes
+              Portal de <span className="text-primary">personajes</span>
             </Link>
             <nav aria-label="Principal" className="flex flex-wrap gap-x-5">
               <Link href="/#personajes" className="header-link text-sm font-semibold text-secondary-foreground">

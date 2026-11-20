@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, type ReactNode } from "react";
 import { CharacterStatus } from "@/components/character-status";
+import { CharacterShowcase } from "@/components/character-showcase";
 import { CharacterSummaryPanel } from "@/components/character-summary-panel";
 import { RequestRetry } from "@/components/request-retry";
 import { parseCharacterId } from "@/lib/character-id";
@@ -84,14 +84,7 @@ export default async function CharacterPage({ params }: DetailProps) {
     <main id="contenido" tabIndex={-1} className="shell inner-page">
       <Link href="/#personajes" className="header-link text-secondary-foreground">← Volver al catálogo</Link>
       <article className="detail-panel" aria-labelledby="character-title">
-        <Image
-          className="detail-image"
-          src={character.image}
-          alt={`Retrato de ${character.name}`}
-          width={300}
-          height={300}
-          sizes="(min-width: 48rem) 300px, min(100vw, 300px)"
-        />
+        <CharacterShowcase image={character.image} name={character.name} />
         <div>
           <p className="character-id font-mono">ID {character.id}</p>
           <h1 id="character-title" className="inner-title">{character.name}</h1>
