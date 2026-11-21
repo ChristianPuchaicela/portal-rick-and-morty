@@ -8,6 +8,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Portal de personajes",
   description: "Explora los personajes de Rick and Morty, abre sus fichas y consulta la respuesta original de la API.",
+  icons: {
+    icon: [
+      {
+        url: "/icons8-rick-sanchez.svg",
+        type: "image/svg+xml",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
