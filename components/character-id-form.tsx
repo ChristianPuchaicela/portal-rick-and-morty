@@ -18,6 +18,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
   const inputId = useId();
   const feedbackId = `${inputId}-feedback`;
   const busy = pending || navigating;
+  const submitLabel = onConsult ? "Consultar personaje" : "Buscar personaje";
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,7 +50,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
       <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
         Buscar personaje por ID
       </label>
-      <div className="search-controls">
+      <div className={onConsult ? "search-controls flex-wrap gap-2" : "search-controls"}>
         <input
           ref={inputRef}
           id={inputId}
@@ -68,8 +69,8 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
         />
         <button
           type="submit"
-          className="search-submit search-submit-icon"
-          aria-label={onConsult ? "Consultar personaje" : "Buscar personaje"}
+          className={onConsult ? "search-submit inline-flex items-center justify-center gap-2" : "search-submit search-submit-icon"}
+          aria-label={submitLabel}
           aria-disabled={busy}
         >
           <svg
@@ -85,6 +86,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
             <circle cx="10.5" cy="10.5" r="6.5" />
             <path d="m16 16 4 4" />
           </svg>
+          {onConsult && <span>{submitLabel}</span>}
         </button>
       </div>
       <p

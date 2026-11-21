@@ -241,11 +241,14 @@ html {
   flex: 1 1 12rem;
   min-block-size: calc(var(--control-size) + 0.5rem);
   padding: 0.625rem 0.875rem;
-  padding-inline-end: calc(var(--control-size) + 0.75rem);
   border: 1px solid var(--input);
   border-radius: var(--radius);
   background: var(--card);
   font-family: var(--type-code);
+}
+
+.search-input:has(+ .search-submit-icon) {
+  padding-inline-end: calc(var(--control-size) + 0.75rem);
 }
 
 .search-input[aria-invalid="true"] {
