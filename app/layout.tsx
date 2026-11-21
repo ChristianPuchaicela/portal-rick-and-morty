@@ -11,8 +11,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icons8-rick-sanchez.svg",
-        type: "image/svg+xml",
+        url: "/icons8-morty-smith-32.png",
+        sizes: "32x32",
+        type: "image/png",
       },
     ],
   },
