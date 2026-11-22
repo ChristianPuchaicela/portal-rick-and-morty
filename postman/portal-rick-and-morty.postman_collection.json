@@ -1,0 +1,950 @@
+{
+  "info": {
+    "name": "Portal Rick and Morty · Pruebas de la aplicación",
+    "description": "Pruebas HTTP del portal Next.js. Usar el Runner local con npm run dev. Para exigir Gemini, asignar gemini a expectedSummarySource.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "description": "Dirección base del portal, sin barra final."
+    },
+    {
+      "key": "lastPage",
+      "value": "42",
+      "description": "Se actualiza con el total de páginas publicado en la portada al ejecutar toda la colección."
+    },
+    {
+      "key": "expectedSummarySource",
+      "value": "",
+      "description": "Vacío acepta ambos orígenes. Usar gemini o simulated para exigir un modo."
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Portada y paginación",
+      "item": [
+        {
+          "name": "Portada y primera página",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"Portada, búsqueda y tarjetas iniciales\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"Portal de personajes de Rick and Morty\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Busca un personaje por su ID\");",
+                  "  pm.expect(pm.response.text()).to.include(\"href=\\\"/personaje/1\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Rick Sanchez\");",
+                  "  pm.expect(pm.response.text()).to.include(\"href=\\\"/?page=2\\\"\");",
+                  "});",
+                  "pm.test(\"La paginación marca la página activa\", () => {",
+                  "  const page = 1;",
+                  "  pm.expect(pm.response.text()).to.match(new RegExp('aria-current=\"page\">\\\\s*' + page + '\\\\s*<'));",
+                  "});",
+                  "pm.test(\"El catálogo publica la cantidad de páginas\", () => {",
+                  "  const html = pm.response.text().replace(/<!--[^]*?-->/g, \"\");",
+                  "  const pagination = html.match(/Página 1 de (\\d+) · (\\d+) personajes/);",
+                  "  pm.expect(pagination, \"Indicador del catálogo\").not.to.equal(null);",
+                  "  pm.expect(Number(pagination[1])).to.be.greaterThan(1);",
+                  "  pm.expect(Number(pagination[2])).to.be.greaterThan(20);",
+                  "  pm.collectionVariables.set(\"lastPage\", pagination[1]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Página 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"Se muestran otras tarjetas y ambos controles de avance\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"href=\\\"/personaje/21\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"aria-label=\\\"Página anterior\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"aria-label=\\\"Página siguiente\\\"\");",
+                  "});",
+                  "pm.test(\"Rick queda fuera de la segunda página\", () => {",
+                  "  pm.expect(pm.response.text()).not.to.include(\"href=\\\"/personaje/1\\\"\");",
+                  "});",
+                  "pm.test(\"La paginación marca la página activa\", () => {",
+                  "  const page = 2;",
+                  "  pm.expect(pm.response.text()).to.match(new RegExp('aria-current=\"page\">\\\\s*' + page + '\\\\s*<'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/?page=2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Última página",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"La paginación marca la página activa\", () => {",
+                  "  const page = pm.variables.get(\"lastPage\");",
+                  "  pm.expect(pm.response.text()).to.match(new RegExp('aria-current=\"page\">\\\\s*' + page + '\\\\s*<'));",
+                  "});",
+                  "pm.test(\"Hay tarjetas y se puede retroceder\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"class=\\\"character-card\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"aria-label=\\\"Página anterior\\\"\");",
+                  "});",
+                  "pm.test(\"No se ofrece una página siguiente\", () => {",
+                  "  pm.expect(pm.response.text()).not.to.include(\"aria-label=\\\"Página siguiente\\\"\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/?page={{lastPage}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{lastPage}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Página fuera de rango",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"El catálogo indica que la página no existe\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"La página solicitada no existe.\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Volver a la primera página\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/?page=9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "9999"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Parámetro de página no numérico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"La paginación marca la página activa\", () => {",
+                  "  const page = 1;",
+                  "  pm.expect(pm.response.text()).to.match(new RegExp('aria-current=\"page\">\\\\s*' + page + '\\\\s*<'));",
+                  "});",
+                  "pm.test(\"Se recupera la primera página\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"href=\\\"/personaje/1\\\"\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/?page=uno",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "uno"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Fichas de personajes",
+      "item": [
+        {
+          "name": "Ficha de Rick Sanchez",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"Identidad, datos, apariciones y accesos del personaje\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"id=\\\"character-title\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Rick Sanchez\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Datos de la ficha\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Apariciones\");",
+                  "  pm.expect(pm.response.text()).to.include(\"href=\\\"/probar?id=1\\\"\");",
+                  "  pm.expect(pm.response.text()).to.include(\"https://rickandmortyapi.com/api/character/1\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/personaje/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personaje",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Personaje inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404 o HTML transmitido por Next.js\", () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([404, 200]);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"Se muestra la pantalla 404 del portal\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"character-error-code\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Personaje no encontrado\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Buscar otro personaje\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/personaje/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personaje",
+                "9999"
+              ]
+            },
+            "description": "Next.js puede devolver HTTP 200 si empezó a transmitir HTML antes de resolver el 404. Se exige la pantalla de error en ambos casos."
+          },
+          "response": []
+        },
+        {
+          "name": "Identificador no numérico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404 o HTML transmitido por Next.js\", () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([404, 200]);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"Se muestra la pantalla 404 del portal\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"character-error-code\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Personaje no encontrado\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Buscar otro personaje\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/personaje/uno",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personaje",
+                "uno"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Probador de endpoints",
+      "item": [
+        {
+          "name": "Formulario y panel de respuesta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"La página ofrece el formulario y espera una consulta\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\">Probar endpoint</h1>\");",
+                  "  pm.expect(pm.response.text()).to.include(\">Solicitud</h2>\");",
+                  "  pm.expect(pm.response.text()).to.include(\">Respuesta</h2>\");",
+                  "  pm.expect(pm.response.text()).to.include(\"Consultar personaje\");",
+                  "  pm.expect(pm.response.text()).to.include(\"La respuesta aparecerá al consultar un personaje.\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/probar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "probar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Carga con ID desde una ficha",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"El formulario viene precargado con el ID 1\", () => {",
+                  "  pm.expect(pm.response.text()).to.match(/<input\\b(?=[^>]*\\bname=\"id\")(?=[^>]*\\bvalue=\"1\")[^>]*>/);",
+                  "});",
+                  "pm.test(\"La consulta requiere enviar el formulario\", () => {",
+                  "  pm.expect(pm.response.text()).to.include(\"La respuesta aparecerá al consultar un personaje.\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/probar?id=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "probar"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Descarta un ID inicial inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es HTML\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "pm.test(\"El campo ID no precarga el decimal\", () => {",
+                  "  const input = pm.response.text().match(/<input\\b[^>]*\\bname=\"id\"[^>]*>/);",
+                  "  pm.expect(input, \"Campo ID\").not.to.equal(null);",
+                  "  pm.expect(input[0]).not.to.include('value=\"1.5\"');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/probar?id=1.5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "probar"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1.5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. API de resumen",
+      "item": [
+        {
+          "name": "Resumen válido de Rick Sanchez",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El resumen contiene tres oraciones y los seis datos de la ficha\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result.sentences).to.be.an(\"array\").with.lengthOf(3);",
+                  "  for (const sentence of result.sentences) {",
+                  "    pm.expect(sentence).to.be.a(\"string\");",
+                  "    pm.expect(sentence.trim()).not.to.be.empty;",
+                  "  }",
+                  "  pm.expect(result.facts).to.be.an(\"array\").with.lengthOf(6);",
+                  "  const facts = Object.fromEntries(result.facts.map(({ label, value }) => [label, value]));",
+                  "  pm.expect(facts).to.have.all.keys(\"Nombre\", \"Especie\", \"Estado\", \"Origen\", \"Última ubicación\", \"Apariciones\");",
+                  "  pm.expect(facts.Nombre).to.equal(\"Rick Sanchez\");",
+                  "  pm.expect(result.sentences[0]).to.include(facts.Nombre);",
+                  "  pm.expect(result.sentences[2]).to.match(new RegExp(\"\\\\b\" + facts.Apariciones + \"\\\\b\"));",
+                  "});",
+                  "pm.test(\"El origen es válido y coincide con el modo exigido, si se configuró\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result.source).to.be.oneOf([\"gemini\", \"simulated\"]);",
+                  "  const expected = pm.variables.get(\"expectedSummarySource\");",
+                  "  if (expected) pm.expect(result.source).to.equal(expected);",
+                  "  if (result.source === \"simulated\") pm.expect(result.notice).to.be.a(\"string\").and.not.be.empty;",
+                  "  console.info(\"Origen del resumen:\", result.source);",
+                  "});",
+                  "pm.test(\"El resumen indica que no debe almacenarse en caché\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":1}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen de personaje inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => {",
+                  "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"Personaje no encontrado\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":9999}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza un ID decimal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"entero positivo\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":1.5}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza un ID de texto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"entero positivo\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":\"uno\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza un ID igual a cero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"entero positivo\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza un ID ausente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"entero positivo\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza JSON malformado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"La respuesta es JSON\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "pm.test(\"El JSON contiene el mensaje esperado y ningún resumen\", () => {",
+                  "  const result = pm.response.json();",
+                  "  pm.expect(result).to.have.all.keys(\"error\");",
+                  "  pm.expect(result.error).to.include(\"entero positivo\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id\":",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechaza el método GET",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 405\", () => {",
+                  "  pm.response.to.have.status(405);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "resumen"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

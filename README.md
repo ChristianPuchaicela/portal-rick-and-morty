@@ -7,9 +7,9 @@ El portal permite recorrer el catálogo, abrir una ficha por ID, visualizar la i
 | Recurso | Enlace |
 | --- | --- |
 | Repositorio | [Código en GitHub](https://github.com/ChristianPuchaicela/portal-rick-and-morty) |
-| Demo desplegada | [Abrir la vista previa del portal](https://6t2wxf-3001.csb.app/) |
-| Proyecto en CodeSandbox | [Abrir el Devbox](https://codesandbox.io/p/devbox/6t2wxf) |
+| Demo desplegada | [Abrir la vista previa del portal](https://portal-rick-and-morty.vercel.app/) |
 | Documentación de la Parte 1 | [Referencia de `GET /character/{id}`](Documentación-Endpoint.md) |
+| Colección de Postman | [Link de la colección en Postman](https://christianpuchaicela-2364717.postman.co/workspace/Christian-Puchaicela's-Workspac~afa2caed-5e17-406b-807a-90083dfb2930/collection/60325957-d8a3dec5-d605-4c01-8063-64970151172f?action=share&source=copy-link&creator=60325957) |
 
 ## Guía de implementación
 

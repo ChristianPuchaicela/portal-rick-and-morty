@@ -205,6 +205,8 @@ Para resolverlo, usa un ID entero positivo que corresponda a un personaje. Por e
 
 ## Pruebas manuales en Postman
 
+Esta bitácora corresponde a la API pública. Las pruebas HTTP del portal Next.js están en la [colección de Postman de la aplicación](postman/portal-rick-and-morty.postman_collection.json), con instrucciones de ejecución en el [README](README.md#pruebas-de-la-aplicación-en-postman).
+
 El 21 de noviembre de 2026 se ejecutaron cinco solicitudes `GET` en Postman Desktop contra la API pública, sin autenticación ni cuerpo. Los tiempos corresponden a una ejecución de cada caso.
 
 | Solicitud | Estado observado | Tiempo | Evidencia en el JSON |
