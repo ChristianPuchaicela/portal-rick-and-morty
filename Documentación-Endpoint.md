@@ -202,3 +202,19 @@ Para resolverlo, usa un ID entero positivo que corresponda a un personaje. Por e
 - Documentación oficial: <https://rickandmortyapi.com/documentation>
 - Listar y filtrar personajes: `GET /character`
 - Obtener varios personajes a la vez: `GET /character/1,2,3`
+
+## Pruebas manuales en Postman
+
+El 21 de noviembre de 2026 se ejecutaron cinco solicitudes `GET` en Postman Desktop contra la API pública, sin autenticación ni cuerpo. Los tiempos corresponden a una ejecución de cada caso.
+
+| Solicitud | Estado observado | Tiempo | Evidencia en el JSON |
+| --- | --- | --- | --- |
+| `/character/1` | `200 OK` | 98 ms | Devuelve el ID `1`, el nombre `Rick Sanchez` y el estado `Alive`. |
+| `/character/9999` | `404 Not Found` | 36 ms | `{"error":"Character not found"}`. |
+| `/character/uno` | `500 Internal Server Error` | 33 ms | `{"error":"Hey! you must provide an id"}`. |
+| `/character` | `200 OK` | 30 ms | `info.count` es `826`, `info.pages` es `42`, `info.prev` es `null` y el primer ID es `1`. |
+| `/character?page=2` | `200 OK` | 27 ms | El primer ID es `21`. `info.prev` apunta a la página 1 e `info.next` apunta a la 3. |
+
+Para repetir las pruebas, abre una solicitud nueva en Postman, selecciona `GET`, añade cada ruta a `https://rickandmortyapi.com/api` y pulsa **Send**. Revisa el código HTTP y el cuerpo en **Response → Body**. Para la paginación, compara `info` y el primer elemento de `results` de las dos últimas consultas.
+
+El `500` se observó al enviar directamente `uno` a la API. El formulario del portal valida el ID antes de enviarlo.

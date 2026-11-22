@@ -9,7 +9,7 @@ El portal permite recorrer el catálogo, abrir una ficha por ID, visualizar la i
 | Repositorio | [Código en GitHub](https://github.com/ChristianPuchaicela/portal-rick-and-morty) |
 | Demo desplegada | [Abrir la vista previa del portal](https://6t2wxf-3001.csb.app/) |
 | Proyecto en CodeSandbox | [Abrir el Devbox](https://codesandbox.io/p/devbox/6t2wxf) |
-| Documentación de la Parte 1 | [Referencia de `GET /character/{id}`](docs/endpoint.md) |
+| Documentación de la Parte 1 | [Referencia de `GET /character/{id}`](Documentación-Endpoint.md) |
 
 ## Guía de implementación
 
@@ -88,7 +88,7 @@ En **CodeSandbox**, guardar `GEMINI_API_KEY` como secreto en **CodeSandbox DevTo
 
 ### Decisiones de redacción (Parte 1)
 
-La [referencia del endpoint](docs/endpoint.md) presenta primero el propósito y el caso de uso, luego el parámetro y una solicitud ejecutable. El **tono** es directo e instructivo, pensado para una persona que empieza a trabajar con la API. El **nivel de detalle** permite hacer una primera consulta rápidamente y, después, revisar el significado de los campos y cómo recuperarse de los errores. El ejemplo indica dónde se abrevió el JSON.
+La [referencia del endpoint](Documentación-Endpoint.md) presenta primero el propósito y el caso de uso, luego el parámetro y una solicitud ejecutable. El **tono** es directo e instructivo, pensado para una persona que empieza a trabajar con la API. El **nivel de detalle** permite hacer una primera consulta rápidamente y, después, revisar el significado de los campos y cómo recuperarse de los errores. El ejemplo indica dónde se abrevió el JSON.
 
 ## Diseño del prompt
 
@@ -128,12 +128,14 @@ Al detectar una discrepancia, el servidor **descarta la salida** y **muestra el 
 
 Las pruebas de interfaz se pueden repetir en el navegador. La integración con la API externa puede variar según su disponibilidad y cuota.
 
+La [bitácora de Postman](Documentación-Endpoint.md#pruebas-manuales-en-postman) registra los códigos, los tiempos y los campos verificados en cinco solicitudes directas a la API.
+
 | Caso | Pasos y resultado esperado |
 | --- | --- |
 | ID `1` | En `/probar`, introducir `1` y consultar. Debe aparecer HTTP `200` y el JSON de Rick Sanchez. |
 | ID `9999` | En `/probar`, consultar ese ID y comprobar HTTP `404`. En la búsqueda de la portada, el mismo ID abre la pantalla «Personaje no encontrado». |
 | ID decimal `1.5` | En `/probar`, escribir el valor y enviar. El formulario rechaza el formato antes de consultar la API. |
-| ID no numérico `uno` | En `/probar`, escribir `uno` y enviar. El formulario lo rechaza antes de consultar la API. La [solicitud directa a la API](docs/endpoint.md#500-internal-server-error-id-no-numérico) ejemplifica el `500` observado en la Parte 1. |
+| ID no numérico `uno` | En `/probar`, escribir `uno` y enviar. El formulario lo rechaza antes de consultar la API. La [solicitud directa a la API](Documentación-Endpoint.md#500-internal-server-error-id-no-numérico) ejemplifica el `500` observado en la Parte 1. |
 | Paginación | En el catálogo, abrir la segunda página mediante el botón numerado. Deben cambiar la cuadrícula, el indicador de página y el parámetro `page` en la URL. |
 | Gemini con clave válida | Abrir `/personaje/1` y pulsar **Generar resumen con IA**. Comprobar la etiqueta **Generado por IA · Gemini**, el nombre y el número de apariciones de la ficha. |
 | Gemini sin clave | En una ejecución local sin `GEMINI_API_KEY`, repetir la generación. Debe aparecer **Simulado** con el motivo y los datos de la ficha. |
