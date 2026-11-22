@@ -2,8 +2,11 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { CatalogLoading, CharacterCatalog } from "@/components/character-catalog";
 import { CharacterIdForm } from "@/components/character-id-form";
+import { parseCharacterId } from "@/lib/character-id";
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ page?: string | string[] }> }) {
+  const { page } = await searchParams;
+  const catalogPage = typeof page === "string" ? parseCharacterId(page) ?? 1 : 1;
   return (
     <main id="contenido" tabIndex={-1} className="shell">
       <div id="inicio" className="hero">
@@ -23,17 +26,14 @@ export default function Home() {
       </div>
       <section id="buscar" aria-labelledby="buscar-titulo" className="search-panel">
         <div>
-          <h2 id="buscar-titulo" className="search-title">Buscar por ID</h2>
-          <p className="mt-2 max-w-[36ch] text-sm leading-relaxed text-muted-foreground">
-            Abre la ficha del personaje con su identificador.
-          </p>
+          <h2 id="buscar-titulo" className="search-title">Busca un personaje por su ID</h2>
         </div>
         <CharacterIdForm />
       </section>
       <section id="personajes" className="catalog-section" aria-labelledby="catalog-title">
-        <h2 id="catalog-title" className="search-title">Personajes</h2>
-        <Suspense fallback={<CatalogLoading />}>
-          <CharacterCatalog />
+        <h2 id="catalog-title" tabIndex={-1} className="search-title">Personajes</h2>
+        <Suspense key={catalogPage} fallback={<CatalogLoading />}>
+          <CharacterCatalog page={catalogPage} />
         </Suspense>
       </section>
     </main>

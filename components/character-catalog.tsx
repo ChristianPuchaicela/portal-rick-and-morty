@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
 import { characterPath } from "@/lib/character-id";
-import { getFirstCharacterPage, type CharacterSummary } from "@/lib/characters";
+import { getCharacterPage, type CharacterSummary } from "@/lib/characters";
 import { RequestRetry } from "@/components/request-retry";
+import { CatalogPagination } from "@/components/catalog-pagination";
 
 function CharacterCard({ character }: { character: CharacterSummary }) {
   return (
@@ -48,13 +49,13 @@ export function CatalogLoading() {
   );
 }
 
-export async function CharacterCatalog() {
+export async function CharacterCatalog({ page }: { page: number }) {
   await connection();
 
-  let characters: CharacterSummary[];
+  let result: Awaited<ReturnType<typeof getCharacterPage>>;
 
   try {
-    characters = await getFirstCharacterPage();
+    result = await getCharacterPage(page);
   } catch (error) {
     console.error("Character catalog request failed", error);
     return (
@@ -66,11 +67,31 @@ export async function CharacterCatalog() {
     );
   }
 
+  if (!result) {
+    return (
+      <div className="catalog-notice">
+        <p role="status">La página solicitada no existe.</p>
+        <Link href="/" scroll={false} className="header-link text-secondary-foreground">Volver a la primera página</Link>
+      </div>
+    );
+  }
+
+  if (result.kind === "rate-limited") {
+    return (
+      <div className="catalog-notice">
+        <p role="status" className="font-semibold text-destructive">La API alcanzó su límite de solicitudes.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Espera un momento e intenta cargar el catálogo otra vez.</p>
+        <RequestRetry pendingMessage="Volviendo a consultar el catálogo…" />
+      </div>
+    );
+  }
+
+  const { characters, total, pages } = result;
+
   if (characters.length === 0) {
     return (
       <div className="catalog-notice">
         <p role="status" className="font-semibold">El catálogo está vacío.</p>
-        <p className="mt-2 text-sm text-muted-foreground">La API respondió sin personajes en la primera página.</p>
         <RequestRetry pendingMessage="Volviendo a consultar el catálogo…" />
       </div>
     );
@@ -78,12 +99,16 @@ export async function CharacterCatalog() {
 
   return (
     <>
-      <p role="status" className="catalog-summary">
-        {characters.length === 1 ? "1 personaje" : `${characters.length} personajes`} en la primera página
-      </p>
+      <div className="catalog-toolbar">
+        <p role="status" className="catalog-summary">
+          Página {page} de {pages} · {total} personajes
+        </p>
+        <CatalogPagination page={page} pages={pages} label="Páginas del catálogo" />
+      </div>
       <ul role="list" className="character-grid">
         {characters.map((character) => <CharacterCard key={character.id} character={character} />)}
       </ul>
+      <CatalogPagination page={page} pages={pages} label="Páginas del catálogo al final de la cuadrícula" />
     </>
   );
 }

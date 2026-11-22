@@ -130,11 +130,14 @@ export async function getCharacter(id: number): Promise<CharacterResponse> {
   }
 }
 
-export async function getFirstCharacterPage(): Promise<CharacterSummary[]> {
-  const response = await fetch(`${API_BASE}/character`, {
-    cache: "no-store",
+export async function getCharacterPage(page: number) {
+  const response = await fetch(`${API_BASE}/character?page=${page}`, {
+    next: { revalidate: 300 },
     signal: AbortSignal.timeout(8_000),
   });
+
+  if (response.status === 404 && page > 1) return null;
+  if (response.status === 429) return { kind: "rate-limited" } as const;
 
   if (!response.ok) {
     throw new Error(`Character catalog returned HTTP ${response.status}`);
@@ -144,6 +147,17 @@ export async function getFirstCharacterPage(): Promise<CharacterSummary[]> {
   if (
     typeof body !== "object" ||
     body === null ||
+    !("info" in body) ||
+    typeof body.info !== "object" ||
+    body.info === null ||
+    !("count" in body.info) ||
+    typeof body.info.count !== "number" ||
+    !Number.isSafeInteger(body.info.count) ||
+    body.info.count < 0 ||
+    !("pages" in body.info) ||
+    typeof body.info.pages !== "number" ||
+    !Number.isSafeInteger(body.info.pages) ||
+    body.info.pages < 0 ||
     !("results" in body) ||
     !Array.isArray(body.results) ||
     !body.results.every(isCharacter)
@@ -151,5 +165,5 @@ export async function getFirstCharacterPage(): Promise<CharacterSummary[]> {
     throw new Error("Invalid character catalog response");
   }
 
-  return body.results;
+  return { kind: "success", characters: body.results as CharacterSummary[], total: body.info.count, pages: body.info.pages } as const;
 }

@@ -47,9 +47,6 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <label htmlFor={inputId} className="mb-2 block text-sm font-semibold">
-        Buscar personaje por ID
-      </label>
       <div className={onConsult ? "search-controls flex-wrap gap-2" : "search-controls"}>
         <input
           ref={inputRef}
@@ -60,7 +57,7 @@ export function CharacterIdForm({ initialId, onConsult, pending = false }: Chara
           autoComplete="off"
           required
           defaultValue={initialId}
-          placeholder="Por ejemplo, 1"
+          placeholder="Usa un número, por ejemplo, 1"
           readOnly={busy}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? feedbackId : undefined}
